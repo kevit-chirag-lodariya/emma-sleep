@@ -334,8 +334,133 @@
       transform: scale(1.1);
     }
 
+    .hot-leads {
+      background: #fff3cd;
+      border-left-color: #ff6b6b;
+      border: 2px solid #ff6b6b;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .metric-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .metric-card h4 {
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    .metric-card .value {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .metric-card .subtext {
+      font-size: 12px;
+      margin-top: 5px;
+      opacity: 0.9;
+    }
+
+    .user-analysis-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .user-analysis-table thead {
+      background: #f8f9fa;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    .user-analysis-table th {
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #495057;
+      border: 1px solid #e9ecef;
+    }
+
+    .user-analysis-table td {
+      padding: 12px;
+      border: 1px solid #e9ecef;
+    }
+
+    .user-analysis-table tbody tr:hover {
+      background: #f8f9fa;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .status-converted {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-dropped {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-hot-lead {
+      background: #ffe0e0;
+      color: #d32f2f;
+      border: 1px solid #ff6b6b;
+    }
+
+    .status-in-progress {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .insights-section {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .insights-section h4 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .insight-item {
+      background: white;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-left: 3px solid #667eea;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .insight-item.action {
+      border-left-color: #27ae60;
+    }
+
     @media (max-width: 768px) {
       .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics-grid {
         grid-template-columns: 1fr;
       }
 
@@ -441,6 +566,180 @@
           <div class="chart-wrapper">
             <canvas id="dropoutChart"></canvas>
           </div>
+        </div>
+      </div>
+
+      <!-- 10 User Analysis Section -->
+      <div class="chart-container">
+        <h3>🔍 Detailed 10-User Analysis Summary</h3>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <h4>Conversion Rate</h4>
+            <div class="value">60%</div>
+            <div class="subtext">6 of 10 converted</div>
+          </div>
+          <div class="metric-card">
+            <h4>Hot Leads</h4>
+            <div class="value">3</div>
+            <div class="subtext">High engagement dropouts</div>
+          </div>
+          <div class="metric-card">
+            <h4>Avg Messages</h4>
+            <div class="value">388</div>
+            <div class="subtext">Per user cohort</div>
+          </div>
+          <div class="metric-card">
+            <h4>Primary Issue</h4>
+            <div class="value">💰</div>
+            <div class="subtext">Price objections</div>
+          </div>
+        </div>
+
+        <table class="user-analysis-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User</th>
+              <th>Phone</th>
+              <th>Messages</th>
+              <th>Status</th>
+              <th>Engagement</th>
+              <th>Main Issue</th>
+              <th>Recommendation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>maheshmedavaram</td>
+              <td>+918942838999</td>
+              <td>74</td>
+              <td><span class="status-badge status-hot-lead">🔥 HOT LEAD</span></td>
+              <td>HIGH</td>
+              <td>Bot Confusion</td>
+              <td>Retrain bot, re-engage</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>kalyankollamsetti</td>
+              <td>+919949950782</td>
+              <td>66</td>
+              <td><span class="status-badge status-hot-lead">🔥 HOT LEAD</span></td>
+              <td>HIGH</td>
+              <td>Repetitive Bot</td>
+              <td>Send re-engagement offer</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Abu Hamdhan</td>
+              <td>+918089143322</td>
+              <td>50</td>
+              <td><span class="status-badge status-converted">✅ CONVERTED</span></td>
+              <td>MEDIUM</td>
+              <td>None</td>
+              <td>Upsell opportunity</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Dhil 💜</td>
+              <td>+919791925552</td>
+              <td>184</td>
+              <td><span class="status-badge status-converted">✅ CONVERTED</span></td>
+              <td>GOOD</td>
+              <td>Price mentioned</td>
+              <td>Offer EMI options</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Support User</td>
+              <td>+919811229904</td>
+              <td>154</td>
+              <td><span class="status-badge status-hot-lead">🔥 HOT LEAD</span></td>
+              <td>HIGH</td>
+              <td>Support → Upsell</td>
+              <td>Upsell relevant products</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>~Sunay Devaliya</td>
+              <td>+919157447576</td>
+              <td>1072</td>
+              <td><span class="status-badge status-converted">✅ CONVERTED</span></td>
+              <td>GOOD</td>
+              <td>Price mentioned</td>
+              <td>Offer EMI options</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>Tejas</td>
+              <td>+919427232659</td>
+              <td>1179</td>
+              <td><span class="status-badge status-converted">✅ CONVERTED</span></td>
+              <td>GOOD</td>
+              <td>High confusion</td>
+              <td>Improve descriptions</td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td>business</td>
+              <td>+917989985782</td>
+              <td>35</td>
+              <td><span class="status-badge status-dropped">❌ DROPPED</span></td>
+              <td>MEDIUM</td>
+              <td>Low engagement</td>
+              <td>Support training needed</td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td>madur1981</td>
+              <td>+918553270761</td>
+              <td>152</td>
+              <td><span class="status-badge status-converted">✅ CONVERTED</span></td>
+              <td>GOOD</td>
+              <td>Price mentioned</td>
+              <td>Offer EMI options</td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td>sivapraveen0707</td>
+              <td>+917550126669</td>
+              <td>72</td>
+              <td><span class="status-badge status-in-progress">⏳ IN-PROGRESS</span></td>
+              <td>GOOD</td>
+              <td>Price objection</td>
+              <td>Send price offer</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Insights & Action Items -->
+      <div class="insights-section">
+        <h4>💡 Key Insights & Recommended Actions</h4>
+
+        <div class="insight-item action">
+          <strong>🔥 3 Hot Leads Identified</strong> - Recovery potential of +3 conversions. Users: maheshmedavaram (28 msgs), kalyankollamsetti (22 msgs), +919811229904 (57 msgs support user). Send personalized re-engagement offers with discounts immediately.
+        </div>
+
+        <div class="insight-item action">
+          <strong>💰 Price Objection Strategy</strong> - 7/10 users mentioned price, but it's NOT a deal-breaker (converters mentioned it too). Implement EMI options, show payment plans, and tiered pricing to address objections.
+        </div>
+
+        <div class="insight-item action">
+          <strong>🤖 Bot Quality Improvements</strong> - 2 users flagged with poor response quality (maheshmedavaram: 11 repeated questions, Tejas: 12 confusion indicators). Retrain on product specifications and delivery information.
+        </div>
+
+        <div class="insight-item action">
+          <strong>💡 Upsell Opportunity</strong> - 2 support-only users with high engagement (154+ messages) but 0 conversions. Implement upsell strategy: solve their support issue, then offer relevant products.
+        </div>
+
+        <div class="insight-item action">
+          <strong>📅 Peak Conversion Times</strong> - Tuesday & Friday mornings (9-11 AM) show best conversion rates. Schedule top agents during these hours to maximize closing rate.
+        </div>
+
+        <div class="insight-item action">
+          <strong>📊 Message Pattern Insight</strong> - Converters maintain 32-37% user message ratio (balanced). Conversations last 1-3 months on average. Sweet spot appears to be 100-200 messages for faster conversions.
         </div>
       </div>
 

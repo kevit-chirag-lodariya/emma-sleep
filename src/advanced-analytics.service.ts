@@ -107,8 +107,8 @@ export class AdvancedAnalyticsService {
     };
 
     for (const customer of customers) {
-      const source = customer.channelName || 'direct';
-      const campaign = customer.customFields?.campaign || 'organic';
+      const source: string = (customer.channelName as string) || 'direct';
+      const campaign: string = (customer.customFields?.campaign as string) || 'organic';
 
       // Initialize if not exists
       if (!analysis.bySource[source]) {
@@ -118,12 +118,12 @@ export class AdvancedAnalyticsService {
         analysis.byCampaign[campaign] = { total: 0, converted: 0, rate: '0' };
       }
 
-      analysis.bySource[source].total++;
-      analysis.byCampaign[campaign].total++;
+      (analysis.bySource[source] as any).total++;
+      (analysis.byCampaign[campaign] as any).total++;
 
       if (customer.tags?.includes('conversion-completed')) {
-        analysis.bySource[source].converted++;
-        analysis.byCampaign[campaign].converted++;
+        (analysis.bySource[source] as any).converted++;
+        (analysis.byCampaign[campaign] as any).converted++;
       }
     }
 
@@ -158,8 +158,8 @@ export class AdvancedAnalyticsService {
 
     const users = await this.messageModel.aggregate(pipeline).exec();
 
-    const convertedUsers = [];
-    const droppedUsers = [];
+    const convertedUsers: any[] = [];
+    const droppedUsers: any[] = [];
 
     // Get customer tags
     const customers = await this.customerModel.find({}, { userId: 1, tags: 1 }).exec();
@@ -496,7 +496,7 @@ export class AdvancedAnalyticsService {
       .find({ tags: 'dropped' })
       .exec();
 
-    const hotLeads = [];
+    const hotLeads: any[] = [];
     const totalMessages = await this.messageModel.countDocuments().exec();
 
     for (const customer of droppedCustomers) {
@@ -521,7 +521,7 @@ export class AdvancedAnalyticsService {
     return {
       totalDroppedUsers: droppedCustomers.length,
       hotLeads: hotLeads.sort(
-        (a, b) =>
+        (a: any, b: any) =>
           parseFloat(b.progressPercentage) - parseFloat(a.progressPercentage),
       ),
       hotLeadsCount: hotLeads.length,
@@ -687,12 +687,14 @@ export class AdvancedAnalyticsService {
 
     for (const userId in userLanguages) {
       const user = userLanguages[userId];
-      const primaryLanguage =
-        user.languages.size > 1 ? 'mixed' : Array.from(user.languages)[0] || 'english';
+      const primaryLanguage: string =
+        user.languages.size > 1 ? 'mixed' : (Array.from(user.languages)[0] as string) || 'english';
 
-      conversionByLanguage[primaryLanguage].total++;
-      if (user.isConverted) {
-        conversionByLanguage[primaryLanguage].converted++;
+      if (conversionByLanguage[primaryLanguage]) {
+        conversionByLanguage[primaryLanguage].total++;
+        if (user.isConverted) {
+          conversionByLanguage[primaryLanguage].converted++;
+        }
       }
     }
 
