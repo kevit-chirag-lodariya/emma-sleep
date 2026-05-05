@@ -1,0 +1,14 @@
+services:
+  mongodb:
+    image: mongo:8
+    container_name: emma-sleep-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: emma-sleep
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

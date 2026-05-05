@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emma Sleep - Analytics Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #333;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .header-subtitle {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-left: 4px solid #667eea;
+    }
+
+    .card.highlight {
+      border-left-color: #27ae60;
+    }
+
+    .card.warning {
+      border-left-color: #f39c12;
+    }
+
+    .card.danger {
+      border-left-color: #e74c3c;
+    }
+
+    .stat-label {
+      color: #888;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .stat-subtext {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .chart-container {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .chart-container h3 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 400px;
+      margin-bottom: 20px;
+    }
+
+    .funnel-stages {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .funnel-stage {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .stage-bar {
+      flex-grow: 1;
+      height: 40px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      color: white;
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    .stage-info {
+      min-width: 150px;
+      text-align: right;
+    }
+
+    .stage-label {
+      font-weight: 500;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .stage-percent {
+      color: #888;
+      font-size: 12px;
+    }
+
+    .table-container {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      overflow-x: auto;
+    }
+
+    .table-container h3 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #f8f9fa;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    th {
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      color: #495057;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #e9ecef;
+      font-size: 13px;
+      color: #495057;
+    }
+
+    tbody tr:hover {
+      background: #f8f9fa;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .badge-danger {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .badge-info {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .search-section {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .search-section h3 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+
+    .search-input {
+      display: flex;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      flex-grow: 1;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    button {
+      padding: 12px 25px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #764ba2;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      background: #e9ecef;
+      color: #495057;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    .refresh-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #667eea;
+      color: white;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      transition: transform 0.3s;
+    }
+
+    .refresh-btn:hover {
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-wrapper {
+        height: 300px;
+      }
+
+      table {
+        font-size: 11px;
+      }
+
+      th, td {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📊 Emma Sleep - Analytics Dashboard</h1>
+      <p class="header-subtitle">Real-time customer behavior and conversion analytics powered by AI</p>
+    </header>
+
+    <div id="error-container"></div>
+
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Loading dashboard data...</p>
+    </div>
+
+    <div id="dashboard" style="display: none;">
+      <!-- Overview Stats -->
+      <div class="grid">
+        <div class="card">
+          <div class="stat-label">Total Customers</div>
+          <div class="stat-value" id="totalCustomers">-</div>
+          <div class="stat-subtext">In system</div>
+        </div>
+
+        <div class="card highlight">
+          <div class="stat-label">AI Analyzed</div>
+          <div class="stat-value" id="aiAnalyzed">-</div>
+          <div class="stat-subtext"><span id="aiPercentage">-</span>% of total</div>
+        </div>
+
+        <div class="card highlight">
+          <div class="stat-label">Conversions</div>
+          <div class="stat-value" id="conversions">-</div>
+          <div class="stat-subtext" id="conversionRate">-% conversion rate</div>
+        </div>
+
+        <div class="card warning">
+          <div class="stat-label">Dropouts</div>
+          <div class="stat-value" id="dropouts">-</div>
+          <div class="stat-subtext" id="dropoutRate">-% dropout rate</div>
+        </div>
+
+        <div class="card">
+          <div class="stat-label">Come to Buy</div>
+          <div class="stat-value" id="comeToBuy">-</div>
+          <div class="stat-subtext">Purchase intent shown</div>
+        </div>
+
+        <div class="card">
+          <div class="stat-label">Need Support</div>
+          <div class="stat-value" id="comeToSupport">-</div>
+          <div class="stat-subtext">Support requests</div>
+        </div>
+      </div>
+
+      <!-- Conversion Funnel -->
+      <div class="chart-container">
+        <h3>🎯 Conversion Funnel</h3>
+        <div class="funnel-stages" id="funnel-stages"></div>
+      </div>
+
+      <!-- Charts -->
+      <div class="grid">
+        <div class="chart-container">
+          <h3>📈 Tag Distribution</h3>
+          <div class="chart-wrapper">
+            <canvas id="tagsChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <h3>😊 Sentiment Analysis</h3>
+          <div class="chart-wrapper">
+            <canvas id="sentimentChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <h3>🎯 User Intent Distribution</h3>
+          <div class="chart-wrapper">
+            <canvas id="intentChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <h3>⏸️ Dropout Reasons</h3>
+          <div class="chart-wrapper">
+            <canvas id="dropoutChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Conversions -->
+      <div class="table-container">
+        <h3>✅ Recent Conversions</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Phone</th>
+              <th>Name</th>
+              <th>Tags</th>
+              <th>Last Interaction</th>
+            </tr>
+          </thead>
+          <tbody id="recentConversions"></tbody>
+        </table>
+      </div>
+
+      <!-- Recent Dropouts -->
+      <div class="table-container">
+        <h3>❌ Recent Dropouts</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Phone</th>
+              <th>Name</th>
+              <th>Intent</th>
+              <th>Dropout Reason</th>
+              <th>Last Interaction</th>
+            </tr>
+          </thead>
+          <tbody id="recentDropouts"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <button class="refresh-btn" onclick="loadDashboard()" title="Refresh Dashboard">↻</button>
+
+  <script>
+    let tagsChart = null;
+    let sentimentChart = null;
+    let intentChart = null;
+    let dropoutChart = null;
+
+    async function loadDashboard() {
+      try {
+        const loading = document.getElementById('loading');
+        const dashboard = document.getElementById('dashboard');
+        const errorContainer = document.getElementById('error-container');
+
+        loading.style.display = 'block';
+        dashboard.style.display = 'none';
+        errorContainer.innerHTML = '';
+
+        const [statsResp, funnelResp, dropoutResp, conversionsResp, dropoutsResp] = await Promise.all([
+          fetch('/analytics/dashboard'),
+          fetch('/analytics/conversion-funnel'),
+          fetch('/analytics/dropout-analysis'),
+          fetch('/analytics/conversions?limit=5'),
+          fetch('/analytics/dropouts?limit=5'),
+        ]);
+
+        if (!statsResp.ok) throw new Error('Failed to load dashboard');
+
+        const stats = await statsResp.json();
+        const funnel = await funnelResp.json();
+        const dropout = await dropoutResp.json();
+        const conversions = await conversionsResp.json();
+        const dropouts = await dropoutsResp.json();
+
+        // Update overview stats
+        document.getElementById('totalCustomers').textContent = stats.overview.totalCustomers.toLocaleString();
+        document.getElementById('aiAnalyzed').textContent = stats.overview.customersWithAiUsed.toLocaleString();
+        document.getElementById('aiPercentage').textContent = stats.overview.aiUsedPercentage;
+
+        document.getElementById('conversions').textContent = stats.conversionStats.conversionsCompleted;
+        document.getElementById('conversionRate').textContent = `${stats.conversionStats.conversionRate}% conversion rate`;
+
+        document.getElementById('dropouts').textContent = stats.conversionStats.dropped;
+        document.getElementById('dropoutRate').textContent = `${stats.conversionStats.dropoutRate}% dropout rate`;
+
+        document.getElementById('comeToBuy').textContent = stats.conversionStats.comeToBuy;
+        document.getElementById('comeToSupport').textContent = stats.conversionStats.comeToSupport;
+
+        // Funnel
+        const funnelHtml = funnel.stages.map(stage => `
+          <div class="funnel-stage">
+            <div class="stage-bar" style="width: ${Math.max(stage.percentage, 10)}%">
+              ${stage.count}
+            </div>
+            <div class="stage-info">
+              <div class="stage-label">${stage.name}</div>
+              <div class="stage-percent">${stage.percentage}%</div>
+            </div>
+          </div>
+        `).join('');
+        document.getElementById('funnel-stages').innerHTML = funnelHtml;
+
+        // Tags Chart
+        const tagsCtx = document.getElementById('tagsChart').getContext('2d');
+        if (tagsChart) tagsChart.destroy();
+        tagsChart = new Chart(tagsCtx, {
+          type: 'doughnut',
+          data: {
+            labels: stats.tagDistribution.map(t => t._id),
+            datasets: [{
+              data: stats.tagDistribution.map(t => t.count),
+              backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#fee140', '#30b0fe'],
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+              }
+            }
+          }
+        });
+
+        // Sentiment Chart
+        const sentimentCtx = document.getElementById('sentimentChart').getContext('2d');
+        if (sentimentChart) sentimentChart.destroy();
+        sentimentChart = new Chart(sentimentCtx, {
+          type: 'pie',
+          data: {
+            labels: ['Positive', 'Negative'],
+            datasets: [{
+              data: [stats.sentimentStats.positive, stats.sentimentStats.negative],
+              backgroundColor: ['#27ae60', '#e74c3c']
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+              }
+            }
+          }
+        });
+
+        // Intent Chart
+        const intentCtx = document.getElementById('intentChart').getContext('2d');
+        if (intentChart) intentChart.destroy();
+        intentChart = new Chart(intentCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Buy Intent', 'Support Intent', 'Hybrid'],
+            datasets: [{
+              label: 'Customers',
+              data: [stats.intents.buyIntent, stats.intents.supportIntent, stats.intents.hybridIntent],
+              backgroundColor: ['#667eea', '#f093fb', '#43e97b']
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+              legend: {
+                display: false
+              }
+            }
+          }
+        });
+
+        // Dropout Chart
+        const dropoutCtx = document.getElementById('dropoutChart').getContext('2d');
+        if (dropoutChart) dropoutChart.destroy();
+        const dropoutReasons = Object.keys(dropout.byReason);
+        const dropoutCounts = Object.values(dropout.byReason);
+        dropoutChart = new Chart(dropoutCtx, {
+          type: 'bar',
+          data: {
+            labels: dropoutReasons.map(r => r.replace(/-/g, ' ')),
+            datasets: [{
+              label: 'Count',
+              data: dropoutCounts,
+              backgroundColor: '#e74c3c'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+              legend: {
+                display: false
+              }
+            }
+          }
+        });
+
+        // Recent Conversions
+        const conversionsHtml = conversions.map(c => `
+          <tr>
+            <td>${c.botUserId || '-'}</td>
+            <td>${c.name || '-'}</td>
+            <td>
+              <div class="tags-list">
+                ${c.tags.filter(t => t !== 'ai-used').slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('')}
+              </div>
+            </td>
+            <td>${new Date(c.lastInteractedDate).toLocaleDateString()}</td>
+          </tr>
+        `).join('');
+        document.getElementById('recentConversions').innerHTML = conversionsHtml || '<tr><td colspan="4" style="text-align: center;">No data</td></tr>';
+
+        // Recent Dropouts
+        const dropoutsHtml = dropouts.map(d => {
+          const dropoutTag = d.tags.find(t => t.startsWith('dropped-')) || 'unknown';
+          const intent = d.tags.includes('come-to-buy') ? 'Buy' : d.tags.includes('come-to-support') ? 'Support' : 'Other';
+          return `
+            <tr>
+              <td>${d.botUserId || '-'}</td>
+              <td>${d.name || '-'}</td>
+              <td><span class="badge badge-info">${intent}</span></td>
+              <td><span class="badge badge-danger">${dropoutTag.replace('dropped-', '')}</span></td>
+              <td>${new Date(d.lastInteractedDate).toLocaleDateString()}</td>
+            </tr>
+          `;
+        }).join('');
+        document.getElementById('recentDropouts').innerHTML = dropoutsHtml || '<tr><td colspan="5" style="text-align: center;">No data</td></tr>';
+
+        loading.style.display = 'none';
+        dashboard.style.display = 'block';
+      } catch (error) {
+        console.error('Error loading dashboard:', error);
+        const errorContainer = document.getElementById('error-container');
+        errorContainer.innerHTML = `<div class="error">⚠️ Error loading dashboard: ${error.message}</div>`;
+        document.getElementById('loading').style.display = 'none';
+      }
+    }
+
+    // Auto-refresh every 5 minutes
+    setInterval(loadDashboard, 5 * 60 * 1000);
+
+    // Initial load
+    loadDashboard();
+  </script>
+</body>
+</html>

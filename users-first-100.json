@@ -1,0 +1,929 @@
+{
+  "requestedRange": {
+    "startDate": "2026-04-14T00:00:00.000Z",
+    "endDate": "2026-05-04T13:08:53.142Z"
+  },
+  "sourceUrl": "https://open-api.conversationalcommerce.netcorecloud.com/users",
+  "channelIds": [
+    1010,
+    1014,
+    1016,
+    1017,
+    1021
+  ],
+  "windowsPlanned": 5,
+  "windowsFetched": 1,
+  "windows": [
+    {
+      "startDate": "2026-04-14T00:00:00.000Z",
+      "endDate": "2026-04-19T00:00:00.000Z",
+      "pagesFetched": 1,
+      "total": 8684,
+      "usersFetched": 100
+    }
+  ],
+  "totalUsersFetched": 100,
+  "maxUsers": 100,
+  "users": [
+    {
+      "userId": "69cb4d31683e68d680fe58e9",
+      "botUserId": "+919791925552",
+      "createdDate": "2026-03-31T04:27:29.653Z",
+      "first interacted date": "2026-03-31T04:27:29.652Z",
+      "last interacted date": "2026-05-04T13:00:27.629Z",
+      "channelName": "whatsapp",
+      "name": "Dhil💜"
+    },
+    {
+      "userId": "67b2161176ec5a24dee25754",
+      "botUserId": "+917985032505",
+      "createdDate": "2025-02-16T16:45:05.308Z",
+      "first interacted date": "2025-02-16T16:45:05.307Z",
+      "last interacted date": "2026-05-04T12:51:35.258Z",
+      "channelName": "whatsapp",
+      "name": "+917985032505"
+    },
+    {
+      "userId": "69dca6885af3ce7cf9f1dce7",
+      "botUserId": "+918667304224",
+      "createdDate": "2026-04-13T08:17:12.117Z",
+      "first interacted date": "2026-04-13T08:17:12.116Z",
+      "last interacted date": "2026-05-04T12:05:38.474Z",
+      "channelName": "whatsapp",
+      "name": "Sha"
+    },
+    {
+      "userId": "69e3a21aab04a1d11a85264b",
+      "botUserId": "+919949016662",
+      "createdDate": "2026-04-18T15:24:10.710Z",
+      "first interacted date": "2026-04-18T15:24:10.710Z",
+      "last interacted date": "2026-05-04T11:41:57.633Z",
+      "channelName": "whatsapp",
+      "name": "Ashok Talla"
+    },
+    {
+      "userId": "68c3f6291b19f754465fb0ca",
+      "botUserId": "+919965566847",
+      "createdDate": "2025-09-12T10:30:01.348Z",
+      "first interacted date": "2025-09-12T10:30:01.348Z",
+      "last interacted date": "2026-05-04T10:44:43.416Z",
+      "channelName": "whatsapp",
+      "name": "Venkateswaran"
+    },
+    {
+      "userId": "69d4b7866f4f9b10024e3187",
+      "botUserId": "+919746953608",
+      "createdDate": "2026-04-07T07:51:34.402Z",
+      "first interacted date": "2026-04-07T07:51:34.402Z",
+      "last interacted date": "2026-05-04T10:00:37.456Z",
+      "channelName": "whatsapp",
+      "name": "Aromal cm"
+    },
+    {
+      "userId": "67d29e7404f5920d16638efc",
+      "botUserId": "+919811229904",
+      "createdDate": "2025-03-13T08:59:32.857Z",
+      "first interacted date": "2025-03-13T08:59:32.857Z",
+      "last interacted date": "2026-05-04T09:42:37.061Z",
+      "channelName": "whatsapp",
+      "name": "+919811229904"
+    },
+    {
+      "userId": "69a05ede859d00c9b71afb80",
+      "botUserId": "+919074094359",
+      "createdDate": "2026-02-26T14:55:26.843Z",
+      "first interacted date": "2026-02-26T14:55:26.843Z",
+      "last interacted date": "2026-05-04T09:15:37.202Z",
+      "channelName": "whatsapp",
+      "name": "Rejy retheesh"
+    },
+    {
+      "userId": "69707e9dd07e5816bc878e6e",
+      "botUserId": "+919157447576",
+      "createdDate": "2026-01-21T07:22:05.285Z",
+      "first interacted date": "2026-01-21T07:22:05.285Z",
+      "last interacted date": "2026-05-04T09:01:50.703Z",
+      "channelName": "whatsapp",
+      "name": "~Sunay Devaliya"
+    },
+    {
+      "userId": "6969d4239a16f2eb35b11bed",
+      "botUserId": "+919427232659",
+      "createdDate": "2026-01-16T06:01:07.908Z",
+      "first interacted date": "2026-01-16T06:01:07.908Z",
+      "last interacted date": "2026-05-04T08:50:18.608Z",
+      "channelName": "whatsapp",
+      "name": "Tejas"
+    },
+    {
+      "userId": "69e1c0d34fdbdc68a9625f96",
+      "botUserId": "+919902936507",
+      "createdDate": "2026-04-17T05:10:43.620Z",
+      "first interacted date": "2026-04-17T05:10:43.619Z",
+      "last interacted date": "2026-05-04T08:45:15.910Z",
+      "channelName": "whatsapp",
+      "name": "Deepu Arpitha 🥰"
+    },
+    {
+      "userId": "69cb60b3683e68d68009cb90",
+      "botUserId": "+918608822005",
+      "createdDate": "2026-03-31T05:50:43.168Z",
+      "first interacted date": "2026-03-31T05:50:43.168Z",
+      "last interacted date": "2026-05-04T08:18:32.421Z",
+      "channelName": "whatsapp",
+      "name": "Hi"
+    },
+    {
+      "userId": "6984d60be3b90703c9822941",
+      "botUserId": "+918328076800",
+      "createdDate": "2026-02-05T17:40:27.137Z",
+      "first interacted date": "2026-02-05T17:40:27.137Z",
+      "last interacted date": "2026-05-04T08:17:27.061Z",
+      "channelName": "whatsapp",
+      "name": "srinivas"
+    },
+    {
+      "userId": "6917f552ba427a330ab1f887",
+      "botUserId": "+919535891965",
+      "createdDate": "2025-11-15T03:36:50.369Z",
+      "first interacted date": "2025-11-15T03:36:50.369Z",
+      "last interacted date": "2026-05-04T08:07:24.024Z",
+      "channelName": "whatsapp",
+      "name": "Ravi sampigedalu..!!"
+    },
+    {
+      "userId": "69e21ed837622848987dac69",
+      "botUserId": "+917989985782",
+      "createdDate": "2026-04-17T11:51:52.206Z",
+      "first interacted date": "2026-04-17T11:51:52.205Z",
+      "last interacted date": "2026-05-04T08:00:05.615Z",
+      "channelName": "whatsapp",
+      "name": "business"
+    },
+    {
+      "userId": "69daf4125af3ce7cf9405a80",
+      "botUserId": "+919032468739",
+      "createdDate": "2026-04-12T01:23:30.471Z",
+      "first interacted date": "2026-04-12T01:23:30.470Z",
+      "last interacted date": "2026-05-04T07:26:35.219Z",
+      "channelName": "whatsapp",
+      "name": "sujathamandava05"
+    },
+    {
+      "userId": "69beb05fca996a72c183e1cf",
+      "botUserId": "+917032069563",
+      "createdDate": "2026-03-21T14:51:11.495Z",
+      "first interacted date": "2026-03-21T14:51:11.495Z",
+      "last interacted date": "2026-05-04T06:30:30.977Z",
+      "channelName": "whatsapp",
+      "name": "himanshukalra"
+    },
+    {
+      "userId": "697f256ce3b90703c9791f26",
+      "botUserId": "+919701723608",
+      "createdDate": "2026-02-01T10:05:32.718Z",
+      "first interacted date": "2026-02-01T10:05:32.718Z",
+      "last interacted date": "2026-05-04T06:14:08.505Z",
+      "channelName": "whatsapp",
+      "name": "Badri"
+    },
+    {
+      "userId": "69bacf6fca996a72c1a82dd2",
+      "botUserId": "+919705233416",
+      "createdDate": "2026-03-18T16:14:39.834Z",
+      "first interacted date": "2026-03-18T16:14:39.834Z",
+      "last interacted date": "2026-05-04T06:00:07.258Z",
+      "channelName": "whatsapp",
+      "name": "Suresh S"
+    },
+    {
+      "userId": "69a7b79b0c31828b3ff2b46a",
+      "botUserId": "+919360212529",
+      "createdDate": "2026-03-04T04:39:55.848Z",
+      "first interacted date": "2026-03-04T04:39:55.847Z",
+      "last interacted date": "2026-05-04T05:22:57.751Z",
+      "channelName": "whatsapp",
+      "name": "👑"
+    },
+    {
+      "userId": "689adf169428e6fec265f0a2",
+      "botUserId": "+919900887725",
+      "createdDate": "2025-08-12T06:28:38.107Z",
+      "first interacted date": "2025-08-12T06:28:38.106Z",
+      "last interacted date": "2026-05-04T05:00:07.540Z",
+      "channelName": "whatsapp",
+      "name": "prabakarnagara2288"
+    },
+    {
+      "userId": "6994403a5b1f02de6fde1174",
+      "botUserId": "+918553270761",
+      "createdDate": "2026-02-17T10:17:30.342Z",
+      "first interacted date": "2026-02-17T10:17:30.342Z",
+      "last interacted date": "2026-05-03T23:37:18.528Z",
+      "channelName": "whatsapp",
+      "name": "madur1981@gmail.Com"
+    },
+    {
+      "userId": "69dd5dfc5af3ce7cf944af26",
+      "botUserId": "+917550126669",
+      "createdDate": "2026-04-13T21:19:56.670Z",
+      "first interacted date": "2026-04-13T21:19:56.670Z",
+      "last interacted date": "2026-05-03T19:57:48.120Z",
+      "channelName": "whatsapp",
+      "name": "sivapraveen0707"
+    },
+    {
+      "userId": "6999d9e9de74e158f8045524",
+      "botUserId": "+919247230384",
+      "createdDate": "2026-02-21T16:14:33.254Z",
+      "first interacted date": "2026-02-21T16:14:33.253Z",
+      "last interacted date": "2026-05-03T19:26:27.794Z",
+      "channelName": "whatsapp",
+      "name": "gandrapraveen1"
+    },
+    {
+      "userId": "69ddf06b5af3ce7cf979e0e4",
+      "botUserId": "+919515138948",
+      "createdDate": "2026-04-14T07:44:43.192Z",
+      "first interacted date": "2026-04-14T07:44:43.192Z",
+      "last interacted date": "2026-05-03T18:32:48.364Z",
+      "channelName": "whatsapp",
+      "name": "Susan Lokeswari"
+    },
+    {
+      "userId": "67138f845e4b35003bc0cccb",
+      "botUserId": "+917680022114",
+      "createdDate": "2024-10-19T10:52:52.301Z",
+      "first interacted date": "2024-10-19T10:52:52.300Z",
+      "last interacted date": "2026-05-03T18:13:26.687Z",
+      "channelName": "whatsapp",
+      "name": "+917680022114"
+    },
+    {
+      "userId": "69e2d293ab04a1d11a1b9ff0",
+      "botUserId": "+918111900665",
+      "createdDate": "2026-04-18T00:38:43.562Z",
+      "first interacted date": "2026-04-18T00:38:43.562Z",
+      "last interacted date": "2026-05-03T17:52:34.195Z",
+      "channelName": "whatsapp",
+      "name": "aslamashraf094"
+    },
+    {
+      "userId": "69e33bbaab04a1d11a4e8e1f",
+      "botUserId": "+917826979636",
+      "createdDate": "2026-04-18T08:07:22.121Z",
+      "first interacted date": "2026-04-18T08:07:22.121Z",
+      "last interacted date": "2026-05-03T17:02:02.537Z",
+      "channelName": "whatsapp",
+      "name": "S.BhuviSelvam"
+    },
+    {
+      "userId": "69e20bc337622848986c4b0d",
+      "botUserId": "+919842691677",
+      "createdDate": "2026-04-17T10:30:27.366Z",
+      "first interacted date": "2026-04-17T10:30:27.366Z",
+      "last interacted date": "2026-05-03T16:44:19.145Z",
+      "channelName": "whatsapp",
+      "name": "sachinchinnaraj677"
+    },
+    {
+      "userId": "69d0cd4f683e68d6808682f0",
+      "botUserId": "+919600113931",
+      "createdDate": "2026-04-04T08:35:27.547Z",
+      "first interacted date": "2026-04-04T08:35:27.546Z",
+      "last interacted date": "2026-05-03T16:37:48.825Z",
+      "channelName": "whatsapp",
+      "name": "Sri Dhanalakshmi Engineering"
+    },
+    {
+      "userId": "69c6a40d683e68d68023d754",
+      "botUserId": "+917702834020",
+      "createdDate": "2026-03-27T15:36:45.706Z",
+      "first interacted date": "2026-03-27T15:36:45.706Z",
+      "last interacted date": "2026-05-03T15:52:37.222Z",
+      "channelName": "whatsapp",
+      "name": "Mahesh"
+    },
+    {
+      "userId": "69e10a704fdbdc68a92b6241",
+      "botUserId": "+917200799924",
+      "createdDate": "2026-04-16T16:12:32.394Z",
+      "first interacted date": "2026-04-16T16:12:32.394Z",
+      "last interacted date": "2026-05-03T15:50:16.482Z",
+      "channelName": "whatsapp",
+      "name": "NEFT Centre"
+    },
+    {
+      "userId": "69e1e4014fdbdc68a97a36dd",
+      "botUserId": "+919123524004",
+      "createdDate": "2026-04-17T07:40:49.039Z",
+      "first interacted date": "2026-04-17T07:40:49.039Z",
+      "last interacted date": "2026-05-03T15:41:57.085Z",
+      "channelName": "whatsapp",
+      "name": "Galil King"
+    },
+    {
+      "userId": "69de83ba9e9db76ae89b091f",
+      "botUserId": "+919176467210",
+      "createdDate": "2026-04-14T18:13:14.477Z",
+      "first interacted date": "2026-04-14T18:13:14.477Z",
+      "last interacted date": "2026-05-03T15:35:21.941Z",
+      "channelName": "whatsapp",
+      "name": "latha shankar"
+    },
+    {
+      "userId": "69dda1645af3ce7cf95261f8",
+      "botUserId": "+919895163684",
+      "createdDate": "2026-04-14T02:07:32.923Z",
+      "first interacted date": "2026-04-14T02:07:32.922Z",
+      "last interacted date": "2026-05-03T15:25:38.143Z",
+      "channelName": "whatsapp",
+      "name": "Prakasan"
+    },
+    {
+      "userId": "69d9cbce5af3ce7cf9c4febe",
+      "botUserId": "+918861546872",
+      "createdDate": "2026-04-11T04:19:26.679Z",
+      "first interacted date": "2026-04-11T04:19:26.679Z",
+      "last interacted date": "2026-05-03T14:00:58.326Z",
+      "channelName": "whatsapp",
+      "name": "syedimranimmu1"
+    },
+    {
+      "userId": "694e9b6138b09221abd9094c",
+      "botUserId": "+918489386516",
+      "createdDate": "2025-12-26T14:27:45.372Z",
+      "first interacted date": "2025-12-26T14:27:45.372Z",
+      "last interacted date": "2026-05-03T14:00:22.238Z",
+      "channelName": "whatsapp",
+      "name": "ρяαкαѕнѕαяαиуα🥰🤗"
+    },
+    {
+      "userId": "69e20a5a37622848986a7dab",
+      "botUserId": "+919949002220",
+      "createdDate": "2026-04-17T10:24:26.147Z",
+      "first interacted date": "2026-04-17T10:24:26.147Z",
+      "last interacted date": "2026-05-03T14:00:14.921Z",
+      "channelName": "whatsapp",
+      "name": "Aleti Venkata Prasad"
+    },
+    {
+      "userId": "69e38403ab04a1d11a7703b6",
+      "botUserId": "+919842160544",
+      "createdDate": "2026-04-18T13:15:47.753Z",
+      "first interacted date": "2026-04-18T13:15:47.753Z",
+      "last interacted date": "2026-05-03T13:26:11.931Z",
+      "channelName": "whatsapp",
+      "name": "Ayyasamy"
+    },
+    {
+      "userId": "67fe87efe39c36ef316c3589",
+      "botUserId": "+919381931450",
+      "createdDate": "2025-04-15T16:23:11.767Z",
+      "first interacted date": "2025-04-15T16:23:11.767Z",
+      "last interacted date": "2026-05-03T13:22:55.454Z",
+      "channelName": "whatsapp",
+      "name": "+919381931450"
+    },
+    {
+      "userId": "69de75989e9db76ae8954168",
+      "botUserId": "+918019220735",
+      "createdDate": "2026-04-14T17:12:56.720Z",
+      "first interacted date": "2026-04-14T17:12:56.720Z",
+      "last interacted date": "2026-05-03T13:16:57.313Z",
+      "channelName": "whatsapp",
+      "name": "🧘🏻‍♂️"
+    },
+    {
+      "userId": "69de5acb9e9db76ae887cc40",
+      "botUserId": "+919092825058",
+      "createdDate": "2026-04-14T15:18:35.880Z",
+      "first interacted date": "2026-04-14T15:18:35.880Z",
+      "last interacted date": "2026-05-03T13:09:58.330Z",
+      "channelName": "whatsapp",
+      "name": "Bobby"
+    },
+    {
+      "userId": "696323ba9a16f2eb3556095c",
+      "botUserId": "+919400703731",
+      "createdDate": "2026-01-11T04:14:50.207Z",
+      "first interacted date": "2026-01-11T04:14:50.207Z",
+      "last interacted date": "2026-05-03T11:56:51.527Z",
+      "channelName": "whatsapp",
+      "name": "New Malabar Agencies"
+    },
+    {
+      "userId": "69a3ad8b939b5d50dfa9f3ac",
+      "botUserId": "+917760912786",
+      "createdDate": "2026-03-01T03:07:55.491Z",
+      "first interacted date": "2026-03-01T03:07:55.491Z",
+      "last interacted date": "2026-05-03T11:48:03.793Z",
+      "channelName": "whatsapp",
+      "name": "What's app"
+    },
+    {
+      "userId": "6956a8ef9a16f2eb354d1439",
+      "botUserId": "+919080959726",
+      "createdDate": "2026-01-01T17:03:43.324Z",
+      "first interacted date": "2026-01-01T17:03:43.324Z",
+      "last interacted date": "2026-05-03T10:13:57.136Z",
+      "channelName": "whatsapp",
+      "name": "Rayan Razaan"
+    },
+    {
+      "userId": "68e0d0a0bd4b73ec8c596e72",
+      "botUserId": "+919322245436",
+      "createdDate": "2025-10-04T07:45:36.483Z",
+      "first interacted date": "2025-10-04T07:45:36.482Z",
+      "last interacted date": "2026-05-03T10:06:19.597Z",
+      "channelName": "whatsapp",
+      "name": "jitendramane77"
+    },
+    {
+      "userId": "69e344c4ab04a1d11a53cabb",
+      "botUserId": "+919912221616",
+      "createdDate": "2026-04-18T08:45:56.111Z",
+      "first interacted date": "2026-04-18T08:45:56.111Z",
+      "last interacted date": "2026-05-03T08:09:13.224Z",
+      "channelName": "whatsapp",
+      "name": "ravimelingi"
+    },
+    {
+      "userId": "69e19d944fdbdc68a950e868",
+      "botUserId": "+917356633543",
+      "createdDate": "2026-04-17T02:40:20.404Z",
+      "first interacted date": "2026-04-17T02:40:20.403Z",
+      "last interacted date": "2026-05-03T07:09:19.387Z",
+      "channelName": "whatsapp",
+      "name": "Shameerkhan"
+    },
+    {
+      "userId": "69dfa54a9c11985c0e6154d4",
+      "botUserId": "+919985438368",
+      "createdDate": "2026-04-15T14:48:42.364Z",
+      "first interacted date": "2026-04-15T14:48:42.363Z",
+      "last interacted date": "2026-05-03T05:27:09.519Z",
+      "channelName": "whatsapp",
+      "name": "pathijayachandra20"
+    },
+    {
+      "userId": "6805008fe39c36ef31e6416a",
+      "botUserId": "+919535891214",
+      "createdDate": "2025-04-20T14:11:27.410Z",
+      "first interacted date": "2025-04-20T14:11:27.409Z",
+      "last interacted date": "2026-05-03T05:18:45.348Z",
+      "channelName": "whatsapp",
+      "name": "+919535891214"
+    },
+    {
+      "userId": "69de6fea9e9db76ae8925a4f",
+      "botUserId": "+917760854942",
+      "createdDate": "2026-04-14T16:48:42.742Z",
+      "first interacted date": "2026-04-14T16:48:42.741Z",
+      "last interacted date": "2026-05-03T05:14:29.795Z",
+      "channelName": "whatsapp",
+      "name": "Varalakshmi"
+    },
+    {
+      "userId": "69bf865dca996a72c1d014f9",
+      "botUserId": "+919976945408",
+      "createdDate": "2026-03-22T06:04:13.997Z",
+      "first interacted date": "2026-03-22T06:04:13.997Z",
+      "last interacted date": "2026-05-03T03:21:40.767Z",
+      "channelName": "whatsapp",
+      "name": "pothysraja"
+    },
+    {
+      "userId": "69d8f0485af3ce7cf97de053",
+      "botUserId": "+919844545154",
+      "createdDate": "2026-04-10T12:42:48.817Z",
+      "first interacted date": "2026-04-10T12:42:48.816Z",
+      "last interacted date": "2026-05-03T02:55:15.788Z",
+      "channelName": "whatsapp",
+      "name": "louisedwin5154 @ gmail.co"
+    },
+    {
+      "userId": "68d11ed073c5fd6c990bd331",
+      "botUserId": "+919949950782",
+      "createdDate": "2025-09-22T10:02:56.334Z",
+      "first interacted date": "2025-09-22T10:02:56.333Z",
+      "last interacted date": "2026-05-03T02:16:02.786Z",
+      "channelName": "whatsapp",
+      "name": "kalyankollamsetti"
+    },
+    {
+      "userId": "69de2e1d5af3ce7cf997f348",
+      "botUserId": "+918500586460",
+      "createdDate": "2026-04-14T12:07:57.746Z",
+      "first interacted date": "2026-04-14T12:07:57.746Z",
+      "last interacted date": "2026-05-03T01:30:05.525Z",
+      "channelName": "whatsapp",
+      "name": "ŠǏŘłÃ"
+    },
+    {
+      "userId": "69da6dc05af3ce7cf91fd9e6",
+      "botUserId": "+919495195373",
+      "createdDate": "2026-04-11T15:50:24.952Z",
+      "first interacted date": "2026-04-11T15:50:24.951Z",
+      "last interacted date": "2026-05-03T01:18:58.273Z",
+      "channelName": "whatsapp",
+      "name": "Rajeelashaj"
+    },
+    {
+      "userId": "69e209733762284898694983",
+      "botUserId": "+919744289329",
+      "createdDate": "2026-04-17T10:20:35.181Z",
+      "first interacted date": "2026-04-17T10:20:35.181Z",
+      "last interacted date": "2026-05-03T01:09:38.070Z",
+      "channelName": "whatsapp",
+      "name": "Deepak Thomas"
+    },
+    {
+      "userId": "69e37843ab04a1d11a70cf32",
+      "botUserId": "+918121772776",
+      "createdDate": "2026-04-18T12:25:39.724Z",
+      "first interacted date": "2026-04-18T12:25:39.724Z",
+      "last interacted date": "2026-05-03T00:37:43.361Z",
+      "channelName": "whatsapp",
+      "name": "Mohammad Aahmmad"
+    },
+    {
+      "userId": "69dd4d8c5af3ce7cf9424579",
+      "botUserId": "+919847335755",
+      "createdDate": "2026-04-13T20:09:48.097Z",
+      "first interacted date": "2026-04-13T20:09:48.097Z",
+      "last interacted date": "2026-05-02T18:05:44.999Z",
+      "channelName": "whatsapp",
+      "name": "Kamal Kumar C V"
+    },
+    {
+      "userId": "69de01485af3ce7cf9820982",
+      "botUserId": "+919746259117",
+      "createdDate": "2026-04-14T08:56:40.021Z",
+      "first interacted date": "2026-04-14T08:56:40.021Z",
+      "last interacted date": "2026-05-02T17:55:13.204Z",
+      "channelName": "whatsapp",
+      "name": "Beena Beegum"
+    },
+    {
+      "userId": "69e05cc84fdbdc68a9b8b565",
+      "botUserId": "+919663330235",
+      "createdDate": "2026-04-16T03:51:37.000Z",
+      "first interacted date": "2026-04-16T03:51:37.000Z",
+      "last interacted date": "2026-05-02T17:50:01.875Z",
+      "channelName": "whatsapp",
+      "name": "#"
+    },
+    {
+      "userId": "69de2bb95af3ce7cf996e906",
+      "botUserId": "+919345474270",
+      "createdDate": "2026-04-14T11:57:45.380Z",
+      "first interacted date": "2026-04-14T11:57:45.380Z",
+      "last interacted date": "2026-05-02T17:42:36.967Z",
+      "channelName": "whatsapp",
+      "name": "Mathi"
+    },
+    {
+      "userId": "69da582f5af3ce7cf915b2c2",
+      "botUserId": "+917997541944",
+      "createdDate": "2026-04-11T14:18:23.382Z",
+      "first interacted date": "2026-04-11T14:18:23.382Z",
+      "last interacted date": "2026-05-02T17:22:50.884Z",
+      "channelName": "whatsapp",
+      "name": "polipothana"
+    },
+    {
+      "userId": "69de1fe45af3ce7cf990d92a",
+      "botUserId": "+918074248203",
+      "createdDate": "2026-04-14T11:07:16.561Z",
+      "first interacted date": "2026-04-14T11:07:16.561Z",
+      "last interacted date": "2026-05-02T16:52:10.043Z",
+      "channelName": "whatsapp",
+      "name": "Shivedansh Yadav"
+    },
+    {
+      "userId": "69e113114fdbdc68a92f8402",
+      "botUserId": "+919048392739",
+      "createdDate": "2026-04-16T16:49:21.900Z",
+      "first interacted date": "2026-04-16T16:49:21.900Z",
+      "last interacted date": "2026-05-02T16:46:38.535Z",
+      "channelName": "whatsapp",
+      "name": "sumishiju1984"
+    },
+    {
+      "userId": "69e251b53762284898ad4268",
+      "botUserId": "+919420375833",
+      "createdDate": "2026-04-17T15:28:53.580Z",
+      "first interacted date": "2026-04-17T15:28:53.579Z",
+      "last interacted date": "2026-05-02T16:34:44.133Z",
+      "channelName": "whatsapp",
+      "name": "Deepak Wadile"
+    },
+    {
+      "userId": "69e39345ab04a1d11a7e6442",
+      "botUserId": "+919487738020",
+      "createdDate": "2026-04-18T14:20:53.373Z",
+      "first interacted date": "2026-04-18T14:20:53.372Z",
+      "last interacted date": "2026-05-02T16:30:45.275Z",
+      "channelName": "whatsapp",
+      "name": "sakthibalan711"
+    },
+    {
+      "userId": "6804b83be39c36ef31d25c60",
+      "botUserId": "+918885559168",
+      "createdDate": "2025-04-20T09:02:51.815Z",
+      "first interacted date": "2025-04-20T09:02:51.815Z",
+      "last interacted date": "2026-05-02T16:19:54.545Z",
+      "channelName": "whatsapp",
+      "name": "+918885559168"
+    },
+    {
+      "userId": "69e26d453762284898bcef72",
+      "botUserId": "+918310194268",
+      "createdDate": "2026-04-17T17:26:29.703Z",
+      "first interacted date": "2026-04-17T17:26:29.702Z",
+      "last interacted date": "2026-05-02T16:07:53.779Z",
+      "channelName": "whatsapp",
+      "name": "Mahesh Kumar"
+    },
+    {
+      "userId": "69deac959e9db76ae8a51fc1",
+      "botUserId": "+919562552103",
+      "createdDate": "2026-04-14T21:07:33.893Z",
+      "first interacted date": "2026-04-14T21:07:33.893Z",
+      "last interacted date": "2026-05-02T16:06:18.250Z",
+      "channelName": "whatsapp",
+      "name": "Bilal Bilu"
+    },
+    {
+      "userId": "67c45e0d76ec5a24deb982bc",
+      "botUserId": "+918668125200",
+      "createdDate": "2025-03-02T13:33:01.194Z",
+      "first interacted date": "2025-03-02T13:33:01.193Z",
+      "last interacted date": "2026-05-02T15:53:00.449Z",
+      "channelName": "whatsapp",
+      "name": "+918668125200"
+    },
+    {
+      "userId": "69c709a5683e68d680414d82",
+      "botUserId": "+919003003245",
+      "createdDate": "2026-03-27T22:50:13.716Z",
+      "first interacted date": "2026-03-27T22:50:13.715Z",
+      "last interacted date": "2026-05-02T15:01:22.274Z",
+      "channelName": "whatsapp",
+      "name": "kselva207"
+    },
+    {
+      "userId": "69e23aff37622848989dcb4c",
+      "botUserId": "+919502644919",
+      "createdDate": "2026-04-17T13:51:59.347Z",
+      "first interacted date": "2026-04-17T13:51:59.347Z",
+      "last interacted date": "2026-05-02T14:32:07.297Z",
+      "channelName": "whatsapp",
+      "name": "Naresh Perumalla"
+    },
+    {
+      "userId": "69e0fa1d4fdbdc68a922cdd6",
+      "botUserId": "+916302096369",
+      "createdDate": "2026-04-16T15:02:53.757Z",
+      "first interacted date": "2026-04-16T15:02:53.757Z",
+      "last interacted date": "2026-05-02T13:56:14.702Z",
+      "channelName": "whatsapp",
+      "name": "Francis"
+    },
+    {
+      "userId": "69d8e79f5af3ce7cf978ee82",
+      "botUserId": "+919676191179",
+      "createdDate": "2026-04-10T12:05:51.832Z",
+      "first interacted date": "2026-04-10T12:05:51.832Z",
+      "last interacted date": "2026-05-02T13:48:41.684Z",
+      "channelName": "whatsapp",
+      "name": "Rakesh Photography"
+    },
+    {
+      "userId": "691f423f01d1543ff66bef4c",
+      "botUserId": "+919944655906",
+      "createdDate": "2025-11-20T16:30:55.115Z",
+      "first interacted date": "2025-11-20T16:30:55.115Z",
+      "last interacted date": "2026-05-02T13:23:55.831Z",
+      "channelName": "whatsapp",
+      "name": "Karthik.M"
+    },
+    {
+      "userId": "69de1eaf5af3ce7cf9904aaa",
+      "botUserId": "+919846976999",
+      "createdDate": "2026-04-14T11:02:07.173Z",
+      "first interacted date": "2026-04-14T11:02:07.172Z",
+      "last interacted date": "2026-05-02T13:07:03.859Z",
+      "channelName": "whatsapp",
+      "name": "narasakh143"
+    },
+    {
+      "userId": "671ee70432c9303a50ff5afa",
+      "botUserId": "+919403390647",
+      "createdDate": "2024-10-28T01:21:08.356Z",
+      "first interacted date": "2024-10-28T01:21:08.356Z",
+      "last interacted date": "2026-05-02T13:06:37.896Z",
+      "channelName": "whatsapp",
+      "name": "+919403390647"
+    },
+    {
+      "userId": "69dce2c65af3ce7cf917f39b",
+      "botUserId": "+919567487542",
+      "createdDate": "2026-04-13T12:34:14.310Z",
+      "first interacted date": "2026-04-13T12:34:14.309Z",
+      "last interacted date": "2026-05-02T13:05:21.593Z",
+      "channelName": "whatsapp",
+      "name": "Kannan Joshy"
+    },
+    {
+      "userId": "69e3e749ab04a1d11a9c2c24",
+      "botUserId": "+917373440173",
+      "createdDate": "2026-04-18T20:19:21.979Z",
+      "first interacted date": "2026-04-18T20:19:21.979Z",
+      "last interacted date": "2026-05-02T12:57:38.960Z",
+      "channelName": "whatsapp",
+      "name": "Rajesh"
+    },
+    {
+      "userId": "69d00d0f683e68d6803a5f71",
+      "botUserId": "+919949386340",
+      "createdDate": "2026-04-03T18:55:11.433Z",
+      "first interacted date": "2026-04-03T18:55:11.432Z",
+      "last interacted date": "2026-05-02T12:27:27.293Z",
+      "channelName": "whatsapp",
+      "name": "Subhakar Dhulipudi"
+    },
+    {
+      "userId": "69d61c056f4f9b1002f59c0b",
+      "botUserId": "+919502342344",
+      "createdDate": "2026-04-08T09:12:37.998Z",
+      "first interacted date": "2026-04-08T09:12:37.997Z",
+      "last interacted date": "2026-05-02T11:14:04.954Z",
+      "channelName": "whatsapp",
+      "name": "Maddikara Narendra Reddy"
+    },
+    {
+      "userId": "69df5a569c11985c0e357a79",
+      "botUserId": "+919585308383",
+      "createdDate": "2026-04-15T09:28:54.938Z",
+      "first interacted date": "2026-04-15T09:28:54.938Z",
+      "last interacted date": "2026-05-02T10:54:02.345Z",
+      "channelName": "whatsapp",
+      "name": "Karthika"
+    },
+    {
+      "userId": "69de28a75af3ce7cf9955ea5",
+      "botUserId": "+919496802062",
+      "createdDate": "2026-04-14T11:44:39.710Z",
+      "first interacted date": "2026-04-14T11:44:39.709Z",
+      "last interacted date": "2026-05-02T10:49:23.697Z",
+      "channelName": "whatsapp",
+      "name": "abdulsalamb756"
+    },
+    {
+      "userId": "69e2d8f6ab04a1d11a1d2c6d",
+      "botUserId": "+918660294345",
+      "createdDate": "2026-04-18T01:05:58.433Z",
+      "first interacted date": "2026-04-18T01:05:58.433Z",
+      "last interacted date": "2026-05-02T10:47:42.399Z",
+      "channelName": "whatsapp",
+      "name": "Nikhil"
+    },
+    {
+      "userId": "683aae7e0a2223aa261b72af",
+      "botUserId": "+919994024473",
+      "createdDate": "2025-05-31T07:23:42.455Z",
+      "first interacted date": "2025-05-31T07:23:42.455Z",
+      "last interacted date": "2026-05-02T10:46:17.995Z",
+      "channelName": "whatsapp",
+      "name": "+919994024473"
+    },
+    {
+      "userId": "670a4f92531923482fba3e30",
+      "botUserId": "+918179969552",
+      "createdDate": "2024-10-12T10:29:38.600Z",
+      "first interacted date": "2024-10-12T10:29:38.599Z",
+      "last interacted date": "2026-05-02T09:49:36.393Z",
+      "channelName": "whatsapp",
+      "name": "+918179969552"
+    },
+    {
+      "userId": "68730efc58da9529504c1aca",
+      "botUserId": "+919966737912",
+      "createdDate": "2025-07-13T01:42:20.328Z",
+      "first interacted date": "2025-07-13T01:42:20.328Z",
+      "last interacted date": "2026-05-02T09:01:38.150Z",
+      "channelName": "whatsapp",
+      "name": "+919966737912"
+    },
+    {
+      "userId": "69e2f508ab04a1d11a2753c4",
+      "botUserId": "+917559041624",
+      "createdDate": "2026-04-18T03:05:44.788Z",
+      "first interacted date": "2026-04-18T03:05:44.788Z",
+      "last interacted date": "2026-05-02T08:40:02.356Z",
+      "channelName": "whatsapp",
+      "name": "👻"
+    },
+    {
+      "userId": "69d13250601ba81ba393eefd",
+      "botUserId": "+918547427721",
+      "createdDate": "2026-04-04T15:46:24.153Z",
+      "first interacted date": "2026-04-04T15:46:24.152Z",
+      "last interacted date": "2026-05-02T08:28:42.453Z",
+      "channelName": "whatsapp",
+      "name": "Naveena M Joy"
+    },
+    {
+      "userId": "69998ee7de74e158f85f2fb8",
+      "botUserId": "+916238963941",
+      "createdDate": "2026-02-21T10:54:31.702Z",
+      "first interacted date": "2026-02-21T10:54:31.702Z",
+      "last interacted date": "2026-05-02T08:28:02.312Z",
+      "channelName": "whatsapp",
+      "name": "Ruksana Shan❤️"
+    },
+    {
+      "userId": "68126016f97ec55f8438f3f7",
+      "botUserId": "+919676814333",
+      "createdDate": "2025-04-30T17:38:30.519Z",
+      "first interacted date": "2025-04-30T17:38:30.518Z",
+      "last interacted date": "2026-05-02T08:15:41.042Z",
+      "channelName": "whatsapp",
+      "name": "+919676814333"
+    },
+    {
+      "userId": "69d4c7386f4f9b1002587f85",
+      "botUserId": "+916301807441",
+      "createdDate": "2026-04-07T08:58:32.163Z",
+      "first interacted date": "2026-04-07T08:58:32.162Z",
+      "last interacted date": "2026-05-02T08:12:22.931Z",
+      "channelName": "whatsapp",
+      "name": "APEPDCL"
+    },
+    {
+      "userId": "69e1fef437622848985ba511",
+      "botUserId": "+918722511544",
+      "createdDate": "2026-04-17T09:35:48.749Z",
+      "first interacted date": "2026-04-17T09:35:48.748Z",
+      "last interacted date": "2026-05-02T08:07:09.236Z",
+      "channelName": "whatsapp",
+      "name": "Jayapal Reddy Maram"
+    },
+    {
+      "userId": "69dd1bb15af3ce7cf933e0a4",
+      "botUserId": "+918056630761",
+      "createdDate": "2026-04-13T16:37:05.875Z",
+      "first interacted date": "2026-04-13T16:37:05.874Z",
+      "last interacted date": "2026-05-02T08:02:47.497Z",
+      "channelName": "whatsapp",
+      "name": "RIYAS"
+    },
+    {
+      "userId": "69e1a1894fdbdc68a9529484",
+      "botUserId": "+919074796720",
+      "createdDate": "2026-04-17T02:57:13.747Z",
+      "first interacted date": "2026-04-17T02:57:13.747Z",
+      "last interacted date": "2026-05-02T07:21:24.750Z",
+      "channelName": "whatsapp",
+      "name": "Arya Nair A"
+    },
+    {
+      "userId": "69e29c283762284898cb2a7d",
+      "botUserId": "+97333349006",
+      "createdDate": "2026-04-17T20:46:32.983Z",
+      "first interacted date": "2026-04-17T20:46:32.982Z",
+      "last interacted date": "2026-05-02T07:13:12.641Z",
+      "channelName": "whatsapp",
+      "name": "shafeequekdly"
+    },
+    {
+      "userId": "69d7a2285af3ce7cf9e707de",
+      "botUserId": "+919841343953",
+      "createdDate": "2026-04-09T12:57:12.088Z",
+      "first interacted date": "2026-04-09T12:57:12.088Z",
+      "last interacted date": "2026-05-02T07:13:02.808Z",
+      "channelName": "whatsapp",
+      "name": "Thiyagu"
+    },
+    {
+      "userId": "69ddd9195af3ce7cf96d1ad2",
+      "botUserId": "+971545493188",
+      "createdDate": "2026-04-14T06:05:13.341Z",
+      "first interacted date": "2026-04-14T06:05:13.341Z",
+      "last interacted date": "2026-05-02T07:12:58.822Z",
+      "channelName": "whatsapp",
+      "name": "Ansar"
+    },
+    {
+      "userId": "694bf629be52cb392d491b04",
+      "botUserId": "+919505555444",
+      "createdDate": "2025-12-24T14:18:17.173Z",
+      "first interacted date": "2025-12-24T14:18:17.173Z",
+      "last interacted date": "2026-05-02T07:09:01.395Z",
+      "channelName": "whatsapp",
+      "name": "roopusamvedya"
+    }
+  ]
+}
