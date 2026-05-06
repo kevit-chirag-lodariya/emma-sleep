@@ -7,6 +7,7 @@ const APP_ID = process.env.NETCORE_APP_ID;
 const APP_SECRET = process.env.NETCORE_APP_SECRET;
 const MONGODB_URI = process.env.MONGODB_URI;
 
+const SYNC_LIMIT = 500;
 const BATCH_SIZE = 100;
 const CHANNEL_IDS = {
   webchat: 1010,
@@ -25,7 +26,7 @@ let syncStats = {
   errors: [],
 };
 
-// Get date range for last 5 days
+// Get date range for last 5 days (for fetching users)
 function getDateRange() {
   const endDate = new Date();
   const startDate = new Date();
@@ -84,21 +85,22 @@ async function callAPI(endpoint, method = 'POST', data = null) {
   }
 }
 
-// Fetch WhatsApp users from last 5 days
-async function fetchWhatsAppUsers() {
-  console.log('\n📥 STEP 1: Fetching WhatsApp users from last 5 days...\n');
+// Fetch latest 500 users from last 5 days
+async function fetchUsers(limit = SYNC_LIMIT) {
+  console.log('\n📥 STEP 1: Fetching latest 500 users from last 5 days...\n');
 
   try {
     const { startDate, endDate } = getDateRange();
 
     const payload = {
-      channelIds: [CHANNEL_IDS.whatsapp],
+      channelIds: [1010, 1014, 1016, 1017, 1021], // All channels
       startDate: startDate,
       endDate: endDate,
     };
 
     console.log(`   Date Range: ${startDate.substring(0, 10)} to ${endDate.substring(0, 10)}`);
-    console.log(`   Channel: WhatsApp (ID: ${CHANNEL_IDS.whatsapp})`);
+    console.log(`   Channels: All (webchat, whatsapp, telegram, facebook, instagram)`);
+    console.log(`   Target: ${limit} users`);
     console.log(`   Fetching users...\n`);
 
     const response = await callAPI('/users', 'POST', payload);
@@ -112,7 +114,10 @@ async function fetchWhatsAppUsers() {
       users = response.users;
     }
 
-    console.log(`✅ Fetched ${users.length} WhatsApp users\n`);
+    // Limit to 500 users
+    users = users.slice(0, limit);
+
+    console.log(`✅ Fetched ${users.length} users from API\n`);
     syncStats.usersLoaded = users.length;
 
     if (users.length > 0) {
@@ -151,37 +156,63 @@ async function fetchUserData(userId) {
   }
 }
 
-// Fetch messages for a user
-async function fetchMessages(userId, limit = 100) {
+// Move nested object properties to root level (one level deep only)
+function flattenToRoot(obj) {
+  let result = {};
+
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key];
+
+      if (value !== null && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Date)) {
+        // Move nested object properties to root
+        for (let nestedKey in value) {
+          if (value.hasOwnProperty(nestedKey)) {
+            result[nestedKey] = value[nestedKey];
+          }
+        }
+      } else {
+        result[key] = value;
+      }
+    }
+  }
+
+  return result;
+}
+
+// Fetch ALL messages for a user (all-time, no date restrictions)
+async function fetchMessages(botUserId, channelId = 1014, customerId) {
   try {
     const payload = {
-      filters: {
-        userId: userId,
-      },
-      limit: limit,
-      offset: 0,
+      botUserId: botUserId,
+      channelId: channelId,
     };
 
     const response = await callAPI('/transcripts', 'POST', payload);
 
     let messages = [];
-    if (response.data && Array.isArray(response.data)) {
+    if (Array.isArray(response)) {
+      messages = response;
+    } else if (response.data && Array.isArray(response.data)) {
       messages = response.data;
     } else if (response.transcripts && Array.isArray(response.transcripts)) {
       messages = response.transcripts;
-    } else if (Array.isArray(response)) {
-      messages = response;
     }
 
-    return messages.map((msg) => ({
-      _id: msg.id || msg._id,
-      userId,
-      from: msg.from || msg.sender || 'user',
-      textMessage: msg.text || msg.textMessage || msg.message || '',
-      type: msg.type || 'text',
-      sentAt: msg.sentAt || msg.timestamp || msg.createdAt || new Date(),
-      metadata: msg.metadata || {},
-    }));
+    return messages.map((msg) => {
+      const messageRecord = {
+        _id: msg.id || msg._id,
+        customerId: customerId,
+        botUserId: botUserId,
+        from: msg.from || msg.sender || 'user',
+        textMessage: msg.text || msg.textMessage || msg.message || '',
+        type: msg.type || 'text',
+        sentAt: msg.sentAt || msg.timestamp || msg.createdAt || new Date(),
+      };
+
+      const flatRawData = flattenToRoot(msg);
+      return Object.assign(messageRecord, flatRawData);
+    });
   } catch (error) {
     return [];
   }
@@ -243,15 +274,16 @@ async function syncUsers(db, users) {
 
 // Sync messages
 async function syncMessages(db, users) {
-  console.log('\n💬 STEP 4: Fetching and syncing messages...\n');
+  console.log('\n💬 STEP 4: Fetching and syncing ALL messages (all-time)...\n');
 
   const messagesCollection = db.collection('messages');
 
   for (let i = 0; i < users.length; i++) {
-    const userId = users[i].id || users[i].userId || users[i]._id;
-    if (!userId) continue;
+    const botUserId = users[i].botUserId;
+    const customerId = users[i].userId;
+    if (!botUserId || botUserId === '-') continue;
 
-    const messages = await fetchMessages(userId);
+    const messages = await fetchMessages(botUserId, 1014, customerId);
 
     if (messages.length > 0) {
       try {
@@ -273,7 +305,7 @@ async function syncMessages(db, users) {
 // Generate report
 function generateReport() {
   console.log('\n' + '='.repeat(80));
-  console.log('📊 SYNC REPORT - WhatsApp Users (Last 5 Days)');
+  console.log('📊 SYNC REPORT - 500 Latest Users with All Messages');
   console.log('='.repeat(80) + '\n');
 
   console.log('📈 Summary:');
@@ -298,23 +330,23 @@ function generateReport() {
 }
 
 // Main sync function
-async function syncWhatsAppUsers() {
+async function syncAllMessages() {
   const client = new MongoClient(MONGODB_URI);
 
   try {
     console.log('\n' + '='.repeat(80));
-    console.log('🔄 WHATSAPP USER SYNC');
+    console.log('🔄 SYNC 500 LATEST USERS WITH ALL MESSAGES');
     console.log('='.repeat(80));
     console.log(`API: ${API_BASE}`);
-    console.log(`Channel: WhatsApp (ID: ${CHANNEL_IDS.whatsapp})`);
-    console.log(`Period: Last 5 days`);
+    console.log(`Target: ${SYNC_LIMIT} users`);
+    console.log(`Messages: All-time (no date restrictions)`);
     console.log('='.repeat(80));
 
     // Step 0: Authenticate
     await getAuthToken();
 
     // Step 1: Fetch users
-    const users = await fetchWhatsAppUsers();
+    const users = await fetchUsers(SYNC_LIMIT);
     if (users.length === 0) {
       console.log('❌ No users found for the specified criteria');
       return;
@@ -346,4 +378,4 @@ async function syncWhatsAppUsers() {
   }
 }
 
-syncWhatsAppUsers();
+syncAllMessages();
