@@ -7,7 +7,8 @@ const APP_ID = process.env.NETCORE_APP_ID;
 const APP_SECRET = process.env.NETCORE_APP_SECRET;
 const MONGODB_URI = process.env.MONGODB_URI;
 
-const SYNC_LIMIT = 500;
+const SYNC_LIMIT = process.env.SYNC_LIMIT ? parseInt(process.env.SYNC_LIMIT) : 0; // 0 = fetch all
+const MAX_PAGES = 250; // Safeguard: max 12,500 users (250 pages × 50 users)
 const BATCH_SIZE = 100;
 const CHANNEL_IDS = {
   webchat: 1010,
@@ -85,10 +86,8 @@ async function callAPI(endpoint, method = 'POST', data = null) {
   }
 }
 
-// Fetch latest 500 users from last 5 days
-async function fetchUsers(limit = SYNC_LIMIT) {
-  console.log('\n📥 STEP 1: Fetching latest 500 users from last 5 days...\n');
-
+// Fetch users from a single page
+async function fetchUsersPage(pageNumber, pageSize = 50) {
   try {
     const { startDate, endDate } = getDateRange();
 
@@ -98,62 +97,50 @@ async function fetchUsers(limit = SYNC_LIMIT) {
       endDate: endDate,
     };
 
-    console.log(`   Date Range: ${startDate.substring(0, 10)} to ${endDate.substring(0, 10)}`);
-    console.log(`   Channels: All (webchat, whatsapp, telegram, facebook, instagram)`);
-    console.log(`   Target: ${limit} users`);
-    console.log(`   Fetching users...\n`);
+    const endpoint = `/users?page=${pageNumber}&limit=${pageSize}`;
+    const url = `${API_BASE}${endpoint}`;
+    // console.log(`\n   🔗 URL: ${url}`);
+    // console.log(`   📦 Payload: ${JSON.stringify(payload, null, 2)}`);
 
-    const response = await callAPI('/users', 'POST', payload);
+    const response = await callAPI(endpoint, 'POST', payload);
 
-    let users = [];
+    let pageUsers = [];
     if (Array.isArray(response)) {
-      users = response;
+      pageUsers = response;
     } else if (response.data && Array.isArray(response.data)) {
-      users = response.data;
+      pageUsers = response.data;
     } else if (response.users && Array.isArray(response.users)) {
-      users = response.users;
+      pageUsers = response.users;
     }
 
-    // Limit to 500 users
-    users = users.slice(0, limit);
+    console.log(`   📄 Page ${pageNumber}: fetched ${pageUsers.length} users`);
 
-    console.log(`✅ Fetched ${users.length} users from API\n`);
-    syncStats.usersLoaded = users.length;
-
-    if (users.length > 0) {
-      console.log(`   Sample user keys: ${Object.keys(users[0]).join(', ')}\n`);
-    }
-
-    return users;
+    return {
+      users: pageUsers,
+      hasMore: pageUsers.length === pageSize, // If we got full page, there might be more
+    };
   } catch (error) {
     const errMsg = error.response?.data?.message || error.message;
-    console.error(`❌ Failed to fetch users: ${errMsg}`);
-    syncStats.errors.push(`Fetch users: ${errMsg}`);
+    console.error(`❌ Failed to fetch users page ${pageNumber}: ${errMsg}`);
+    syncStats.errors.push(`Fetch page ${pageNumber}: ${errMsg}`);
     throw error;
   }
 }
 
-// Fetch individual user data
-async function fetchUserData(userId) {
-  try {
-    const response = await callAPI(`/userData/${userId}`, 'GET');
-
-    const user = response.data || response;
-    return {
-      userId: user.id || user.userId || userId,
-      botUserId: user.botUserId || user.phoneNumber || user.phone || '-',
-      name: user.name || user.customerName || 'Unknown',
-      email: user.email || null,
-      phoneNumber: user.phoneNumber || user.phone || null,
-      customFields: user.customFields || user.custom_fields || {},
-      tags: user.tags || user.tag || [],
-      channelName: user.channelName || user.channel || 'whatsapp',
-      lastInteractedDate: user.lastInteractedDate || new Date(),
-      createdAt: user.createdAt || new Date(),
-    };
-  } catch (error) {
-    return null;
-  }
+// Format user data from API response
+function formatUserData(user) {
+  return {
+    userId: user.id || user.userId || user._id,
+    botUserId: user.botUserId || user.phoneNumber || user.phone || '-',
+    name: user.name || user.customerName || 'Unknown',
+    email: user.email || null,
+    phoneNumber: user.phoneNumber || user.phone || null,
+    customFields: user.customFields || user.custom_fields || {},
+    tags: user.tags || user.tag || [],
+    channelName: user.channelName || user.channel || 'whatsapp',
+    lastInteractedDate: user.lastInteractedDate || user['last interacted date'] || new Date(),
+    createdAt: user.createdAt || user.createdDate || new Date(),
+  };
 }
 
 // Move nested object properties to root level (one level deep only)
@@ -238,74 +225,78 @@ async function clearExistingData(db) {
   }
 }
 
-// Sync users
-async function syncUsers(db, users) {
-  console.log('\n👥 STEP 3: Processing user details and syncing...\n');
+// Sync users from a page
+async function syncUsersPage(db, pageUsers, pageNumber) {
+  try {
+    const customersCollection = db.collection('customers');
+    let upsertedCount = 0;
 
-  const customersCollection = db.collection('customers');
-  const usersToInsert = [];
+    for (const user of pageUsers) {
+      const userData = formatUserData(user);
 
-  for (let i = 0; i < users.length; i++) {
-    const user = users[i];
-    const userData = await fetchUserData(user.id || user.userId || user._id);
+      const result = await customersCollection.updateOne(
+        { userId: userData.userId },
+        { $set: userData },
+        { upsert: true }
+      );
 
-    if (userData) {
-      usersToInsert.push(userData);
-      syncStats.usersInserted++;
-    }
-
-    // Batch insert
-    if ((i + 1) % BATCH_SIZE === 0 || i === users.length - 1) {
-      if (usersToInsert.length > 0) {
-        try {
-          await customersCollection.insertMany(usersToInsert);
-          console.log(`✅ ${syncStats.usersInserted} users inserted (${i + 1}/${users.length} processed)`);
-          usersToInsert.length = 0;
-        } catch (error) {
-          console.error(`❌ Insert error: ${error.message}`);
-          syncStats.errors.push(`Insert error: ${error.message}`);
-        }
+      if (result.upsertedId || result.modifiedCount > 0) {
+        syncStats.usersInserted++;
+        upsertedCount++;
       }
     }
-  }
 
-  console.log(`\n✨ User sync complete: ${syncStats.usersInserted} users inserted\n`);
+    console.log(`   ✅ Page ${pageNumber}: upserted ${upsertedCount} users (total: ${syncStats.usersInserted})`);
+    return pageUsers.map(user => formatUserData(user));
+  } catch (error) {
+    console.error(`   ❌ Upsert page ${pageNumber} error: ${error.message}`);
+    syncStats.errors.push(`Upsert page ${pageNumber}: ${error.message}`);
+    throw error;
+  }
 }
 
-// Sync messages
-async function syncMessages(db, users) {
-  console.log('\n💬 STEP 4: Fetching and syncing ALL messages (all-time)...\n');
-
+// Sync messages for a page of users
+async function syncMessagesForPage(db, pageUsers, pageNumber) {
   const messagesCollection = db.collection('messages');
 
-  for (let i = 0; i < users.length; i++) {
-    const botUserId = users[i].botUserId;
-    const customerId = users[i].userId;
-    if (!botUserId || botUserId === '-') continue;
+  for (let i = 0; i < pageUsers.length; i++) {
+    const botUserId = pageUsers[i].botUserId;
+    const customerId = pageUsers[i].userId;
+
+    if (!botUserId || botUserId === '-') {
+      continue;
+    }
 
     const messages = await fetchMessages(botUserId, 1014, customerId);
 
     if (messages.length > 0) {
       try {
-        const result = await messagesCollection.insertMany(messages);
-        syncStats.messagesInserted += result.insertedCount;
+        for (const message of messages) {
+          await messagesCollection.updateOne(
+            { _id: message._id },
+            { $set: message },
+            { upsert: true }
+          );
+          syncStats.messagesInserted++;
+        }
       } catch (error) {
-        syncStats.errors.push(`Message insert error: ${error.message}`);
+        syncStats.errors.push(`Message insert error for user ${customerId}: ${error.message}`);
       }
     }
 
-    if ((i + 1) % BATCH_SIZE === 0) {
-      console.log(`✅ ${syncStats.messagesInserted} messages synced (${i + 1}/${users.length} users processed)`);
+    if ((i + 1) % 10 === 0) {
+      console.log(`   ℹ️  ${i + 1}/${pageUsers.length} users processed (${syncStats.messagesInserted} messages total)`);
     }
   }
 
-  console.log(`\n✨ Message sync complete: ${syncStats.messagesInserted} messages inserted\n`);
+  console.log(`   ✅ Page ${pageNumber}: ${syncStats.messagesInserted} messages synced so far`);
 }
 
 // Generate report
 function generateReport() {
+  const targetText = SYNC_LIMIT === 0 ? 'ALL' : SYNC_LIMIT;
   console.log('\n' + '='.repeat(80));
-  console.log('📊 SYNC REPORT - 500 Latest Users with All Messages');
+  console.log(`📊 SYNC REPORT - ${targetText} Users with All Messages`);
   console.log('='.repeat(80) + '\n');
 
   console.log('📈 Summary:');
@@ -334,23 +325,17 @@ async function syncAllMessages() {
   const client = new MongoClient(MONGODB_URI);
 
   try {
+    const targetText = SYNC_LIMIT === 0 ? 'ALL' : SYNC_LIMIT;
     console.log('\n' + '='.repeat(80));
-    console.log('🔄 SYNC 500 LATEST USERS WITH ALL MESSAGES');
+    console.log('🔄 SYNC USERS WITH ALL MESSAGES (PAGE BY PAGE)');
     console.log('='.repeat(80));
     console.log(`API: ${API_BASE}`);
-    console.log(`Target: ${SYNC_LIMIT} users`);
+    console.log(`Target: ${targetText} users from last 5 days`);
     console.log(`Messages: All-time (no date restrictions)`);
     console.log('='.repeat(80));
 
     // Step 0: Authenticate
     await getAuthToken();
-
-    // Step 1: Fetch users
-    const users = await fetchUsers(SYNC_LIMIT);
-    if (users.length === 0) {
-      console.log('❌ No users found for the specified criteria');
-      return;
-    }
 
     // Connect DB
     await client.connect();
@@ -358,14 +343,48 @@ async function syncAllMessages() {
 
     const db = client.db('emma-sleep');
 
-    // Step 2: Clear data
+    // Step 1: Clear data
     await clearExistingData(db);
 
-    // Step 3: Sync users
-    await syncUsers(db, users);
+    // Step 2: Process pages sequentially
+    console.log('\n📥 STEP 2: Fetching and syncing users page by page...\n');
 
-    // Step 4: Sync messages
-    await syncMessages(db, users);
+    let pageNumber = 1;
+    let totalProcessed = 0;
+    let hasMorePages = true;
+
+    while (hasMorePages && (SYNC_LIMIT === 0 || totalProcessed < SYNC_LIMIT) && pageNumber <= MAX_PAGES) {
+      console.log(`\n${'='.repeat(80)}`);
+      console.log(`📖 PAGE ${pageNumber}`);
+      console.log('='.repeat(80));
+
+      // Fetch page
+      const { users: pageUsers, hasMore } = await fetchUsersPage(pageNumber);
+
+      if (pageUsers.length === 0) {
+        console.log('   ℹ️  No more users found');
+        hasMorePages = false;
+        break;
+      }
+
+      syncStats.usersLoaded += pageUsers.length;
+
+      // Insert users from this page
+      console.log(`\n   👥 Inserting users...`);
+      const insertedUsers = await syncUsersPage(db, pageUsers, pageNumber);
+
+      // Fetch messages for users in this page
+      console.log(`\n   💬 Fetching messages for ${insertedUsers.length} users...`);
+      await syncMessagesForPage(db, insertedUsers, pageNumber);
+
+      totalProcessed += pageUsers.length;
+      hasMorePages = hasMore && (SYNC_LIMIT === 0 || totalProcessed < SYNC_LIMIT);
+      pageNumber++;
+    }
+
+    console.log(`\n${'='.repeat(80)}`);
+    console.log('✅ PAGE-BY-PAGE SYNC COMPLETE');
+    console.log('='.repeat(80));
 
     // Report
     generateReport();
