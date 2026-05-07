@@ -1,5 +1,6 @@
 const { MongoClient } = require('mongodb');
 const axios = require('axios');
+const { type } = require('os');
 require('dotenv').config();
 
 const API_BASE = process.env.NETCORE_API_BASE_URL;
@@ -186,19 +187,28 @@ async function fetchMessages(botUserId, channelId = 1014, customerId) {
       messages = response.transcripts;
     }
 
-    return messages.map((msg) => {
+    const { ObjectId } = require('mongodb');
+
+    return messages.map((msg, index) => {
+      // Generate unique ID if not present
+      let messageId = msg.id || msg._id;
+      if (!messageId) {
+        messageId = new ObjectId();
+      }
+
       const messageRecord = {
-        _id: msg.id || msg._id,
+        _id: messageId,
         customerId: customerId,
         botUserId: botUserId,
-        from: msg.from || msg.sender || 'user',
-        textMessage: msg.text || msg.textMessage || msg.message || '',
-        type: msg.type || 'text',
-        sentAt: msg.sentAt || msg.timestamp || msg.createdAt || new Date(),
+        createdAt: msg.createdAt,
+        from: msg.from,
+        isConfigMessage: msg.isConfigMessage,
+        type: msg.type,
+        [msg.type]: msg[msg.type],
       };
 
-      const flatRawData = flattenToRoot(msg);
-      return Object.assign(messageRecord, flatRawData);
+      
+      return messageRecord
     });
   } catch (error) {
     return [];
@@ -258,6 +268,8 @@ async function syncUsersPage(db, pageUsers, pageNumber) {
 // Sync messages for a page of users
 async function syncMessagesForPage(db, pageUsers, pageNumber) {
   const messagesCollection = db.collection('messages');
+  const bulkOps = [];
+  let pageMessageCount = 0;
 
   for (let i = 0; i < pageUsers.length; i++) {
     const botUserId = pageUsers[i].botUserId;
@@ -270,26 +282,46 @@ async function syncMessagesForPage(db, pageUsers, pageNumber) {
     const messages = await fetchMessages(botUserId, 1014, customerId);
 
     if (messages.length > 0) {
+      for (const message of messages) {
+        bulkOps.push({
+          updateOne: {
+            filter: { _id: message._id },
+            update: { $set: message },
+            upsert: true,
+          },
+        });
+        pageMessageCount++;
+        syncStats.messagesInserted++;
+      }
+    }
+
+    // Execute bulk every 500 messages to avoid memory issues
+    if (bulkOps.length >= 500) {
       try {
-        for (const message of messages) {
-          await messagesCollection.updateOne(
-            { _id: message._id },
-            { $set: message },
-            { upsert: true }
-          );
-          syncStats.messagesInserted++;
-        }
+        const result = await messagesCollection.bulkWrite(bulkOps);
+        console.log(`   ℹ️  Bulk inserted ${bulkOps.length} messages`);
+        bulkOps.length = 0;
       } catch (error) {
-        syncStats.errors.push(`Message insert error for user ${customerId}: ${error.message}`);
+        syncStats.errors.push(`Bulk write error for page ${pageNumber}: ${error.message}`);
       }
     }
 
     if ((i + 1) % 10 === 0) {
-      console.log(`   ℹ️  ${i + 1}/${pageUsers.length} users processed (${syncStats.messagesInserted} messages total)`);
+      console.log(`   ℹ️  ${i + 1}/${pageUsers.length} users processed (${pageMessageCount} messages in page)`);
     }
   }
 
-  console.log(`   ✅ Page ${pageNumber}: ${syncStats.messagesInserted} messages synced so far`);
+  // Execute remaining bulk ops
+  if (bulkOps.length > 0) {
+    try {
+      const result = await messagesCollection.bulkWrite(bulkOps);
+      console.log(`   ℹ️  Bulk inserted final ${bulkOps.length} messages`);
+    } catch (error) {
+      syncStats.errors.push(`Final bulk write error for page ${pageNumber}: ${error.message}`);
+    }
+  }
+
+  console.log(`   ✅ Page ${pageNumber}: ${pageMessageCount} messages synced (total: ${syncStats.messagesInserted})`);
 }
 
 // Generate report

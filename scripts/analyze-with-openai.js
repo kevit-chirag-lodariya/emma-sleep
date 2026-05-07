@@ -139,8 +139,8 @@ async function processUsersWithOpenAI() {
 
       // Get all messages for this user
       const messages = await messagesCollection
-        .find({ userId: user.userId })
-        .sort({ sentAt: 1 })
+        .find({ userId: user.userId, isConfigMessage: false }, { projection: { isFromAgent: 0, action: 0, flowId: 0, flowName:0,isPreviewUser:0,isTemplateSentFromFlow:0,sentAt:0,source:0,messageDetails:0,timestamp:0 } })
+        .sort({ createdAt: 1 })
         .toArray();
 
       console.log(`Messages: ${messages.length}`);
