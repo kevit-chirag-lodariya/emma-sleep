@@ -26,61 +26,151 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Generate tags based on classification
+function generateTags(analysis) {
+  const tags = [];
+
+  // Always add ai-used
+  tags.push('ai-used');
+
+  // Conversation type tags
+  if (analysis.conversation_type === 'sales') {
+    tags.push('come-to-buy');
+  } else if (analysis.conversation_type === 'support') {
+    tags.push('come-to-support');
+  } else if (analysis.conversation_type === 'mixed') {
+    tags.push('come-to-buy');
+    tags.push('come-to-support');
+  }
+
+  // Sub-type specific tags
+  if (analysis.sales_sub_type === 'repeat_buyer') {
+    tags.push('repeat-customer');
+  }
+
+  // Order and conversion tags
+  if (analysis.order_placed) {
+    tags.push('buy');
+    tags.push('conversion-completed');
+  }
+
+  if (analysis.conversation_type === 'sales' && analysis.sales_sub_type === 'abandoned') {
+    tags.push('dropped');
+    if (analysis.funnel_stage_reached === 'checkout_intent') {
+      tags.push('dropped-at-payment');
+    } else if (analysis.funnel_stage_reached === 'product_shown' || analysis.funnel_stage_reached === 'need_discovery') {
+      tags.push('dropped-at-product-selection');
+    }
+  }
+
+  if (analysis.conversation_type === 'support' && analysis.resolution_signal === 'unresolved') {
+    tags.push('dropped-at-support');
+  }
+
+  if (analysis.escalated_to_human) {
+    tags.push('escalated-to-human');
+  }
+
+  // Support-specific tags
+  if (analysis.support_sub_type === 'delivery') {
+    tags.push('delivery-issue');
+  } else if (analysis.support_sub_type === 'return_refund') {
+    tags.push('return-request');
+  } else if (analysis.support_sub_type === 'product_quality') {
+    tags.push('quality-complaint');
+  } else if (analysis.support_sub_type === 'warranty') {
+    tags.push('warranty-claim');
+  }
+
+  return [...new Set(tags)]; // Remove duplicates
+}
+
 async function analyzeUserWithOpenAI(userId, phoneNumber, userName, messages) {
   try {
     // Prepare conversation transcript
     const transcript = messages
       .map((msg) => {
-        const sender = msg.from === 'user' ? 'Customer' : 'Bot';
+        const sender = msg.from === 'user' ? 'user' : 'aiAgent';
         const text = msg.textMessage || msg.replyBody || msg.listBody || msg.type || '';
-        return `${sender}: ${text}`;
+        return `[${sender}] ${text}`;
       })
       .join('\n');
 
-    const analysisPrompt = `You are an expert sales analyst and customer behavior specialist. Analyze this customer support/sales conversation transcript and provide detailed insights.
+    const systemPrompt = `You are a conversation classifier for Emma Sleep India's WhatsApp sales and support bot. Emma Sleep sells premium mattresses (starting ~₹9,599) and sleep accessories in India. You will receive the complete conversation between a customer ('user') and the WhatsApp bot ('aiAgent'). Read ALL messages — both user and aiAgent — to understand the full context before classifying. Your classification is INTENT-BASED. You determine what the person is TRYING TO ACHIEVE — not which keywords they used.
 
-CUSTOMER INFO:
-- Phone: ${phoneNumber}
-- Name: ${userName}
-- Message Count: ${messages.length}
+CLASSIFICATION STAGES (complete in this order):
+STAGE 1 — conversation_type:
+  'sales': Person's primary purpose is to evaluate or purchase a product. They do not yet have a product from this conversation.
+  'support': Person already ordered or received a product and needs help with a post-purchase issue.
+  'mixed': Conversation substantively addresses BOTH buying AND a post-purchase issue. Both threads must have 3+ user messages.
+  'unclassified': No classifiable intent. Fewer than 3 user messages with no clear purpose, or completely unrelated to Emma Sleep.
 
-TRANSCRIPT:
+STAGE 2 — sub-type:
+  Sales sub-types:
+    'new_inquiry': First-time buyer exploring products
+    'repeat_buyer': Prior Emma customer buying again
+    'abandoned': Showed buying intent but no order was confirmed
+  Support sub-types:
+    'delivery': Issue with receiving the ordered product
+    'return_refund': Wants to return product or get a refund
+    'product_quality': Problem with the received product's quality or comfort
+    'warranty': Invoking the 15-year warranty for replacement/repair
+    'payment_order': Payment issue, double charge, invoice, order cancellation
+    'general': Post-purchase query not in any above category
+
+STAGE 3 — outcome labels:
+  funnel_stage_reached (sales/mixed only — deepest stage reached):
+    'greeting': Only initial exchange, no product or need discussed
+    'need_discovery': Person communicated a need, bot gathered info
+    'product_shown': Bot presented a specific product recommendation
+    'price_shared': Specific price was communicated
+    'checkout_intent': Person expressed intent to buy or bot sent checkout info
+    'ordered': Unambiguous evidence order was placed
+  resolution_signal (support/mixed only):
+    'resolved': Issue addressed and person's response signals satisfaction
+    'unresolved': Issue raised but person left without satisfaction
+    'escalated': Bot transferred person to human agent
+    'unknown': Conversation ended without enough signal to determine outcome
+
+IMPORTANT RULES:
+1. Read the aiAgent messages — they reveal context the user messages may not.
+2. When intent is ambiguous, pick the SINGLE MOST LIKELY classification.
+3. order_placed = true requires explicit confirmation — not just intent.
+4. Set classifier_confidence: 'high' (all clear), 'medium' (one-two judgment calls), 'low' (unclear).
+5. classifier_notes: Required when confidence is medium/low or when conversation_type is 'mixed'/'unclassified'.
+
+Respond ONLY with a valid JSON object. No explanation outside the JSON.`;
+
+const analysisPrompt = `Classify this conversation:
+customerId: ${userId}
+Phone: ${phoneNumber}
+Name: ${userName}
+Message Count: ${messages.length}
+
+Messages (chronological order):
 ${transcript}
 
-Please analyze and respond in VALID JSON format (no markdown, no extra text) with the following structure:
+Output the classification in this JSON format:
 {
-  "tags": ["array", "of", "tags"],
-  "userIntent": "primary intent (buy/support/inquiry/comparison/other)",
-  "purchaseIntent": "high/medium/low/none",
-  "supportNeeded": "yes/no",
-  "conversionStatus": "completed/dropped/in-progress/not-applicable",
-  "droppedReason": "reason if dropped, null otherwise",
-  "droppedAt": "where in funnel (product-browsing/product-selection/product-details/payment/checkout/other/not-applicable)",
-  "productInterest": ["array", "of", "products"],
-  "concerns": ["array", "of", "concerns"],
-  "sentiment": "positive/neutral/negative",
-  "engagementLevel": "high/medium/low",
-  "salesInsights": "2-3 sentence summary of sales opportunity and recommendations",
-  "followUpActions": ["recommended", "next", "steps"]
-}
-
-CRITICAL TAG RULES - Always include appropriate tags:
-- "ai-used": ALWAYS include (AI agent was involved)
-- "come-to-buy": if customer shows purchase intent
-- "come-to-support": if customer has support/complaint/issue needs
-- "buy": if payment was made, confirmed, or completed
-- "conversion-completed": if transaction or goal was successfully completed
-- "dropped": if customer abandoned without completing their goal
-- "dropped-at-payment": if dropped at payment stage specifically
-- "dropped-at-product-selection": if dropped while selecting products
-- "dropped-at-support": if support issue remained unresolved
-- Include any other relevant custom tags based on deep analysis
-
-Return ONLY the JSON object, nothing else.`;
+  "conversation_type": "sales|support|mixed|unclassified",
+  "sales_sub_type": "new_inquiry|repeat_buyer|abandoned|null",
+  "support_sub_type": "delivery|return_refund|product_quality|warranty|payment_order|general|null",
+  "funnel_stage_reached": "greeting|need_discovery|product_shown|price_shared|checkout_intent|ordered|null",
+  "resolution_signal": "resolved|unresolved|escalated|unknown|null",
+  "order_placed": boolean,
+  "escalated_to_human": boolean,
+  "objection_keywords": ["array", "of", "exact", "phrases"],
+  "classifier_confidence": "high|medium|low",
+  "classifier_notes": "explanation or empty string"
+}`;
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
+        {
+          role: 'system',
+          content: systemPrompt,
+        },
         {
           role: 'user',
           content: analysisPrompt,
@@ -118,9 +208,13 @@ async function processUsersWithOpenAI() {
     const messagesCollection = db.collection('messages');
     const customersCollection = db.collection('customers');
 
-    // Get first 10 users with ai-used tag
+    // Get customerIds that have messages from aiAgent or Bot
+    const customersWithAIMessages = await messagesCollection
+      .distinct('customerId', { from: { $in: ['aiAgent', 'Bot'] } });
+
+    // Get first 10 customer records for those users
     const users = await customersCollection
-      .find({ tags: 'ai-used' })
+      .find({ userId: { $in: customersWithAIMessages } })
       .limit(10)
       .project({ userId: 1, botUserId: 1, name: 1, customFields: 1 })
       .toArray();
@@ -139,7 +233,7 @@ async function processUsersWithOpenAI() {
 
       // Get all messages for this user
       const messages = await messagesCollection
-        .find({ userId: user.userId, isConfigMessage: false }, { projection: { isFromAgent: 0, action: 0, flowId: 0, flowName:0,isPreviewUser:0,isTemplateSentFromFlow:0,sentAt:0,source:0,messageDetails:0,timestamp:0 } })
+        .find({ customerId: user.userId, isConfigMessage: false }, { projection: { isFromAgent: 0, action: 0, flowId: 0, flowName:0,isPreviewUser:0,isTemplateSentFromFlow:0,sentAt:0,source:0,messageDetails:0,timestamp:0 } })
         .sort({ createdAt: 1 })
         .toArray();
 
@@ -159,127 +253,139 @@ async function processUsersWithOpenAI() {
         continue;
       }
 
-      // Update user with tags
+      // Generate tags based on classification
+      const tags = generateTags(analysis);
+
+      // Update user with classification data
       const updateResult = await customersCollection.updateOne(
         { userId: user.userId },
-        { $set: { tags: analysis.tags } }
+        {
+          $set: {
+            classification: analysis,
+            tags: tags,
+            classifiedAt: new Date(),
+          },
+        }
       );
 
-      console.log(`✅ Tags Updated: [${analysis.tags.join(', ')}]`);
-      console.log(`📊 User Intent: ${analysis.userIntent}`);
-      console.log(`📈 Purchase Intent: ${analysis.purchaseIntent}`);
-      console.log(`🎯 Conversion Status: ${analysis.conversionStatus}`);
+      console.log(`✅ Classification: ${analysis.conversation_type}`);
+      console.log(`📊 Type: ${analysis.conversation_type} | Sub-type: ${analysis.sales_sub_type || analysis.support_sub_type || 'N/A'}`);
+      console.log(`🎯 Funnel Stage: ${analysis.funnel_stage_reached || 'N/A'} | Resolution: ${analysis.resolution_signal || 'N/A'}`);
+      console.log(`📋 Order Placed: ${analysis.order_placed} | Escalated: ${analysis.escalated_to_human}`);
+      console.log(`🔍 Confidence: ${analysis.classifier_confidence}`);
 
-      if (analysis.droppedReason) {
-        console.log(`❌ Dropped Reason: ${analysis.droppedReason}`);
-        console.log(`⏸️  Dropped At: ${analysis.droppedAt}`);
+      if (analysis.objection_keywords.length > 0) {
+        console.log(`⚠️  Objections: [${analysis.objection_keywords.join(', ')}]`);
       }
 
-      if (analysis.productInterest.length > 0) {
-        console.log(`🛍️  Product Interest: ${analysis.productInterest.join(', ')}`);
+      if (analysis.classifier_notes) {
+        console.log(`📝 Notes: ${analysis.classifier_notes}`);
       }
 
-      if (analysis.concerns.length > 0) {
-        console.log(`⚠️  Concerns: ${analysis.concerns.join(', ')}`);
-      }
-
-      console.log(`😊 Sentiment: ${analysis.sentiment}`);
-      console.log(`🎯 Engagement: ${analysis.engagementLevel}`);
-      console.log(`\n💡 Sales Insights:\n   ${analysis.salesInsights}`);
-
-      if (analysis.followUpActions.length > 0) {
-        console.log(`\n📋 Follow-up Actions:`);
-        analysis.followUpActions.forEach((action, idx) => {
-          console.log(`   ${idx + 1}. ${action}`);
-        });
-      }
+      console.log(`✏️  Tags: [${tags.join(', ')}]`);
 
       results.push({
         userId: user.userId,
         phone: phoneNumber,
         name: user.name,
         messageCount: messages.length,
-        ...analysis,
+        classification: analysis,
+        tags: tags,
       });
 
       console.log('-'.repeat(80));
     }
 
     // Summary Report
-    console.log('\n' + '='.repeat(80));
-    console.log('SUMMARY REPORT');
-    console.log('='.repeat(80) + '\n');
+    console.log('\n' + '='.repeat(100));
+    console.log('EMMA SLEEP INTENT CLASSIFICATION SUMMARY');
+    console.log('='.repeat(100) + '\n');
 
     // Create summary table
-    console.log('User Analysis Summary:');
-    console.log('-'.repeat(120));
+    console.log('Classification Summary:');
+    console.log('-'.repeat(140));
     console.log(
-      '%-15s | %-20s | %-15s | %-18s | %-20s | %-15s'.replace(/%/g, '')
-        .split('|')
-        .map((s) => s.trim())
-        .join(' | ')
+      'Phone           | Name                 | Type      | Sub-Type        | Funnel Stage    | Resolution  | Conf | Tags'
+        .padEnd(140)
     );
+    console.log('-'.repeat(140));
 
     results.forEach((r) => {
-      const phone = r.phone.substring(0, 14);
-      const name = (r.name || 'N/A').substring(0, 19);
-      const intent = r.userIntent.substring(0, 14);
-      const status = r.conversionStatus.substring(0, 17);
-      const reason = (r.droppedReason || '-').substring(0, 19);
-      const purchase = r.purchaseIntent.substring(0, 14);
+      const phone = r.phone.substring(0, 13);
+      const name = (r.name || 'N/A').substring(0, 18);
+      const type = r.classification.conversation_type.substring(0, 9);
+      const subType = (r.classification.sales_sub_type || r.classification.support_sub_type || 'N/A').substring(0, 14);
+      const funnelStage = (r.classification.funnel_stage_reached || r.classification.resolution_signal || 'N/A').substring(0, 14);
+      const resolution = (r.classification.resolution_signal || 'N/A').substring(0, 10);
+      const conf = r.classification.classifier_confidence.substring(0, 4);
+      const tagsStr = r.tags.slice(0, 3).join(', ');
 
       console.log(
-        `${phone.padEnd(15)} | ${name.padEnd(20)} | ${intent.padEnd(15)} | ${status.padEnd(18)} | ${reason.padEnd(20)} | ${purchase.padEnd(15)}`
+        `${phone.padEnd(15)} | ${name.padEnd(20)} | ${type.padEnd(9)} | ${subType.padEnd(15)} | ${funnelStage.padEnd(15)} | ${resolution.padEnd(11)} | ${conf.padEnd(4)} | ${tagsStr}`
       );
     });
 
-    // Sales Insights Summary
-    console.log('\n\n' + '='.repeat(80));
-    console.log('DETAILED SALES INSIGHTS & RECOMMENDATIONS');
-    console.log('='.repeat(80) + '\n');
+    // Detailed Classifications
+    console.log('\n\n' + '='.repeat(100));
+    console.log('DETAILED CLASSIFICATIONS');
+    console.log('='.repeat(100) + '\n');
 
     results.forEach((r, idx) => {
-      console.log(`${idx + 1}. ${r.phone} (${r.name})`);
-      console.log(`   Messages: ${r.messageCount} | Engagement: ${r.engagementLevel} | Sentiment: ${r.sentiment}`);
-      console.log(`   Product Interest: ${r.productInterest.join(', ') || 'None'}`);
-      console.log(`   Concerns: ${r.concerns.join(', ') || 'None'}`);
-      console.log(`\n   📊 ${r.salesInsights}`);
+      const c = r.classification;
+      console.log(`${idx + 1}. ${r.phone} (${r.name || 'N/A'})`);
+      console.log(`   Messages: ${r.messageCount} | Classified: ${new Date().toISOString().split('T')[0]}`);
+      console.log(`   📊 Type: ${c.conversation_type} | Sub-type: ${c.sales_sub_type || c.support_sub_type || 'N/A'}`);
+      console.log(`   🎯 Funnel: ${c.funnel_stage_reached || 'N/A'} | Resolution: ${c.resolution_signal || 'N/A'}`);
+      console.log(`   ✓ Order Placed: ${c.order_placed} | Escalated: ${c.escalated_to_human}`);
+      console.log(`   🔍 Confidence: ${c.classifier_confidence}`);
 
-      if (r.followUpActions.length > 0) {
-        console.log(`\n   📋 Recommended Actions:`);
-        r.followUpActions.forEach((action, idx) => {
-          console.log(`      ${idx + 1}. ${action}`);
-        });
+      if (c.objection_keywords.length > 0) {
+        console.log(`   ⚠️  Objections: [${c.objection_keywords.join(', ')}]`);
       }
-      console.log('\n' + '-'.repeat(80) + '\n');
+
+      if (c.classifier_notes) {
+        console.log(`   📝 Notes: ${c.classifier_notes}`);
+      }
+
+      console.log(`   🏷️  Tags: [${r.tags.join(', ')}]`);
+      console.log('-'.repeat(100));
     });
 
     // Statistics
-    console.log('\n' + '='.repeat(80));
-    console.log('STATISTICS');
-    console.log('='.repeat(80) + '\n');
+    console.log('\n' + '='.repeat(100));
+    console.log('CLASSIFICATION STATISTICS');
+    console.log('='.repeat(100) + '\n');
 
     const stats = {
       totalUsers: results.length,
-      completed: results.filter((r) => r.conversionStatus === 'completed').length,
-      dropped: results.filter((r) => r.conversionStatus === 'dropped').length,
-      inProgress: results.filter((r) => r.conversionStatus === 'in-progress').length,
-      highPurchaseIntent: results.filter((r) => r.purchaseIntent === 'high').length,
-      mediumPurchaseIntent: results.filter((r) => r.purchaseIntent === 'medium').length,
-      positivesentiment: results.filter((r) => r.sentiment === 'positive').length,
-      negativesentiment: results.filter((r) => r.sentiment === 'negative').length,
+      sales: results.filter((r) => r.classification.conversation_type === 'sales').length,
+      support: results.filter((r) => r.classification.conversation_type === 'support').length,
+      mixed: results.filter((r) => r.classification.conversation_type === 'mixed').length,
+      unclassified: results.filter((r) => r.classification.conversation_type === 'unclassified').length,
+      orderPlaced: results.filter((r) => r.classification.order_placed).length,
+      escalated: results.filter((r) => r.classification.escalated_to_human).length,
+      highConfidence: results.filter((r) => r.classification.classifier_confidence === 'high').length,
+      mediumConfidence: results.filter((r) => r.classification.classifier_confidence === 'medium').length,
+      lowConfidence: results.filter((r) => r.classification.classifier_confidence === 'low').length,
     };
 
-    console.log(`Total Users Analyzed: ${stats.totalUsers}`);
-    console.log(`✅ Conversions Completed: ${stats.completed} (${((stats.completed / stats.totalUsers) * 100).toFixed(1)}%)`);
-    console.log(`❌ Dropped: ${stats.dropped} (${((stats.dropped / stats.totalUsers) * 100).toFixed(1)}%)`);
-    console.log(`⏳ In Progress: ${stats.inProgress} (${((stats.inProgress / stats.totalUsers) * 100).toFixed(1)}%)`);
-    console.log(`\n📈 High Purchase Intent: ${stats.highPurchaseIntent} (${((stats.highPurchaseIntent / stats.totalUsers) * 100).toFixed(1)}%)`);
-    console.log(`📊 Medium Purchase Intent: ${stats.mediumPurchaseIntent} (${((stats.mediumPurchaseIntent / stats.totalUsers) * 100).toFixed(1)}%)`);
-    console.log(`\n😊 Positive Sentiment: ${stats.positivesentiment} (${((stats.positivesentiment / stats.totalUsers) * 100).toFixed(1)}%)`);
-    console.log(`😞 Negative Sentiment: ${stats.negativesentiment} (${((stats.negativesentiment / stats.totalUsers) * 100).toFixed(1)}%)`);
+    console.log(`Total Users Analyzed: ${stats.totalUsers}\n`);
+    console.log('Conversation Types:');
+    console.log(`  📊 Sales: ${stats.sales} (${((stats.sales / stats.totalUsers) * 100).toFixed(1)}%)`);
+    console.log(`  🛠️  Support: ${stats.support} (${((stats.support / stats.totalUsers) * 100).toFixed(1)}%)`);
+    console.log(`  🔀 Mixed: ${stats.mixed} (${((stats.mixed / stats.totalUsers) * 100).toFixed(1)}%)`);
+    console.log(`  ❓ Unclassified: ${stats.unclassified} (${((stats.unclassified / stats.totalUsers) * 100).toFixed(1)}%)\n`);
 
-    console.log('\n✅ User tagging and analysis completed!');
+    console.log('Outcomes:');
+    console.log(`  ✅ Order Placed: ${stats.orderPlaced} (${((stats.orderPlaced / stats.totalUsers) * 100).toFixed(1)}%)`);
+    console.log(`  🤝 Escalated to Human: ${stats.escalated} (${((stats.escalated / stats.totalUsers) * 100).toFixed(1)}%)\n`);
+
+    console.log('Classifier Confidence:');
+    console.log(`  🟢 High: ${stats.highConfidence} (${((stats.highConfidence / stats.totalUsers) * 100).toFixed(1)}%)`);
+    console.log(`  🟡 Medium: ${stats.mediumConfidence} (${((stats.mediumConfidence / stats.totalUsers) * 100).toFixed(1)}%)`);
+    console.log(`  🔴 Low: ${stats.lowConfidence} (${((stats.lowConfidence / stats.totalUsers) * 100).toFixed(1)}%)`);
+
+    console.log('\n✅ Classification and tagging completed!');
 
     await client.close();
   } catch (error) {
