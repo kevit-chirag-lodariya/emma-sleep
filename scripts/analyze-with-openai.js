@@ -26,22 +26,30 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const BUY_MATTRESS_OPTION = 'Buy Mattress on Whatsapp';
+const SUPPORT_MENU_OPTIONS = ['Mattresses', 'Find nearby store 📍', 'Pillows', 'Protector'];
+
+function getUserSelectedOptions(messages) {
+  return messages
+    .filter((m) => m.from === 'User' || m.from === 'user')
+    .map((m) => m.text?.message || '')
+    .filter(Boolean);
+}
+
 // Generate tags based on classification
-function generateTags(analysis) {
+function generateTags(analysis, messages = []) {
   const tags = [];
 
   // Always add ai-used
   tags.push('ai-used');
 
-  // Conversation type tags
-  if (analysis.conversation_type === 'sales') {
-    tags.push('come-to-buy');
-  } else if (analysis.conversation_type === 'support') {
-    tags.push('come-to-support');
-  } else if (analysis.conversation_type === 'mixed') {
-    tags.push('come-to-buy');
-    tags.push('come-to-support');
-  }
+  // come-to-buy / come-to-support based on which menu option the user selected
+  const userSelections = getUserSelectedOptions(messages);
+  const selectedBuy = userSelections.includes(BUY_MATTRESS_OPTION);
+  const selectedSupport = userSelections.some((s) => SUPPORT_MENU_OPTIONS.includes(s));
+
+  if (selectedBuy) tags.push('come-to-buy');
+  if (selectedSupport) tags.push('come-to-support');
 
   // Sub-type specific tags
   if (analysis.sales_sub_type === 'repeat_buyer') {
@@ -254,7 +262,7 @@ async function processUsersWithOpenAI() {
       }
 
       // Generate tags based on classification
-      const tags = generateTags(analysis);
+      const tags = generateTags(analysis, messages);
 
       // Update user with classification data
       const updateResult = await customersCollection.updateOne(
